@@ -17,17 +17,30 @@ const router = createRouter({
             component: () => import("@/page/Reg.vue")
         },
 
-        //学生信息
+        //学生
         {
             path: '/student',
             children: [
                 {
-                    path: 'my_info',
-                    name: 'MyInfo',
-                    component: () => import("@/page/MyInfo.vue")
+                    // 个人信息
+                    path: 'info',
+                    name: 'StudentInfo',
+                    component: () => import("@/page/student/StudentInfo.vue")
                 },
             ]
         },
+
+        //教师
+        {
+            path: '/teacher',
+            children: [
+                {
+                    path: 'info',
+                    name: 'TeacherInfo',
+                    component: () => import("@/page/teacher/TeacherInfo.vue")
+                },
+            ]
+        }
 
     ],
     history: createWebHistory()

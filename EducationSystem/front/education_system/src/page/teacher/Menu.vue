@@ -11,12 +11,12 @@
       <el-menu-item index="0">
         <img
             style="width: 50px"
-            src="../assets/doge.gif"
+            src="../../assets/doge.gif"
             alt="Element logo"
         />
       </el-menu-item>
 
-      <router-link :to="{name: 'MyInfo'}">
+      <router-link :to="{name: 'TeacherInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}
         </el-menu-item>
