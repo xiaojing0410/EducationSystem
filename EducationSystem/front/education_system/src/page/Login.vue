@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <div class="main">
-      <div class="title">学生教育评价系统登录</div>
+      <div class="title">高校智能教育评价系统登录</div>
       <div class="opt">
         <div class="row">
           <span>账号: </span>

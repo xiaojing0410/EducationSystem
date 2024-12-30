@@ -16,6 +16,12 @@
         />
       </el-menu-item>
 
+      <router-link :to="{name: 'Score'}">
+        <el-menu-item index="1">
+          我的成绩单
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'StudentInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}

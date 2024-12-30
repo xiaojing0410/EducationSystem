@@ -29,6 +29,12 @@ const router = createRouter({
                     name: 'StudentInfo',
                     component: () => import("@/page/student/StudentInfo.vue")
                 },
+                {
+                    // 学生成绩
+                    path: 'score',
+                    name: 'Score',
+                    component: () => import("@/page/student/Score.vue")
+                },
             ]
         },
 
