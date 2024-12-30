@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.GradesMapper">
+    <select id="getStudentOneScore" resultType="com.example.demo.entity.Grades">
+        select grades.id,grades.course_id,grades.semester,grades.score from course, grades
+        where course.id = grades.course_id
+          and course.course_name=#{courseName}
+          and grades.id=#{userId};
+    </select>
+    <select id="getStudentSemesterScore" resultType="com.example.demo.entity.Grades">
+        select * from grades where id=#{userId} and semester=#{semester};
+    </select>
+    <select id="getStudentAllScore" resultType="com.example.demo.entity.Grades">
+        select * from grades where id=#{userId};
+    </select>
+
+    <delete id="deleteByStudentId">
+        delete from grades where course_id=#{course_id} and id=#{user_id}
+    </delete>
+    <delete id="deleteByClassId">
+        delete from grades where course_id=#{course_id} and id=(select id from student where class_id=#{class_id})
+    </delete>
+    <insert id="addGrades">
+        insert into grades values (#{id},#{course_id},#{semester},#{score})
+    </insert>
+    <update id="updateGrades">
+        update grades set score=#{score} where id=#{id} and course_id=#{course_id} and semester=#{semester}
+    </update>
+
+</mapper>

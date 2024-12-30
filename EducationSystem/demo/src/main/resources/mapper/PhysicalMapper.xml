@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.PhysicalMapper">
+
+    <insert id="add">
+        insert into physical values (#{student_id},#{semester},#{sprint},#{run},#{sit_up},#{jump},#{height},#{weight})
+    </insert>
+
+    <select id="getPhysicalByStudentId" resultType="com.example.demo.entity.Physical">
+        select * from physical where student_id=#{student_id}
+    </select>
+
+    <select id="getPhysicalByStudentIdAndSemester" resultType="com.example.demo.entity.Physical">
+        select * from physical where student_id=#{student_id} and semester=#{semester}
+    </select>
+
+    <select id="getPhysicalByClassIdAndSemester" resultType="com.example.demo.entity.Physical">
+        select * from physical,student
+        where physical.student_id=student.id
+        and student.class_id=#{class_id}
+        and physical.semester = #{semester}
+    </select>
+
+</mapper>

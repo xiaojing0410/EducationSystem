@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HonorMapper">
+
+    <select id="getHonorByStudentId" resultType="com.example.demo.entity.Honor">
+        select id,student_id,honor_name,award_date,type from Honor where student_id=#{userId};
+    </select>
+    <select id="getHonorByClassId" resultType="com.example.demo.entity.Honor">
+        select Honor.id,Honor.student_id,Honor.honor_name,Honor.award_date,Honor.type from Honor,student
+                where student.id=honor.student_id and student.class_id=#{class_id};
+    </select>
+    <select id="getAllHonor" resultType="com.example.demo.entity.Honor">
+        select id,student_id,honor_name,award_date,type from Honor;
+    </select>
+    <insert id="createHonor">
+        insert into Honor(student_id,Honor_name,award_date,type,state) values(#{student_id}, #{honor_name}, #{award_date},
+                                                                              #{type}, #{state});
+    </insert>
+    <delete id="deleteHonorByStudentId">
+        delete from Honor where student_id=#{id}
+    </delete>
+    <delete id="deleteOneHonor">
+        delete from Honor where id=#{id}
+    </delete>
+    <select id="getHonorById" resultType="com.example.demo.entity.Honor">
+        select * from Honor where id=#{id}
+    </select>
+
+</mapper>
