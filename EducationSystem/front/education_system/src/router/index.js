@@ -5,6 +5,7 @@ const router = createRouter({
         {
             redirect: '/login',
         },
+        // 权限相关
         {
             path: '/login',
             name: 'Login',
@@ -15,6 +16,19 @@ const router = createRouter({
             name: 'Reg',
             component: () => import("@/page/Reg.vue")
         },
+
+        //学生信息
+        {
+            path: '/student',
+            children: [
+                {
+                    path: 'my_info',
+                    name: 'MyInfo',
+                    component: () => import("@/page/MyInfo.vue")
+                },
+            ]
+        },
+
     ],
     history: createWebHistory()
 })
