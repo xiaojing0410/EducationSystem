@@ -1,6 +1,5 @@
 import { id } from "element-plus/es/locale/index.mjs"
-import http from "../../utils.http"
-
+import http from "../..//utils/http"
 
 // 注册
 export function reg_api(username, password, identity){
@@ -12,9 +11,10 @@ export function reg_api(username, password, identity){
 }
 
 // 登录
-export function login_api(student_id, identity){
-  return http.post("/grades/suggest",{
-      student_id: student_id,
+export function login_api(student_id,password, identity){
+  return http.post("/user/login",{
+      id: student_id,
+      password: password,
       identity: identity
   })
 }

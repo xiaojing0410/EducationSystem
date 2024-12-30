@@ -1,4 +1,4 @@
-import http from "@/utils.http"
+import http from "../../utils/http"
 
 
 // 学生 - 查询学生荣誉

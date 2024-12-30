@@ -5,7 +5,7 @@
       <div class="opt">
         <div class="row">
           <span>账号: </span>
-          <el-input class="username ipt" type="text" v-model="usernameIpt" />
+          <el-input class="username ipt" type="text" v-model="idIpt" />
         </div>
         <div class="row">
           <span>密码: </span>
@@ -16,7 +16,7 @@
         <router-link class="note" :to="{name: 'Reg'}">还没有账号？点我注册</router-link>
       </div>
       <div class="btn">
-        <el-button class="login-btn" type="primary" @click="loginHandler()">登录</el-button>
+        <el-button class="login-btn" type="primary" @click="login_cmd(idIpt, passwordIpt, identityIpt)">登录</el-button>
       </div>
     </div>
   </div>
@@ -24,12 +24,13 @@
 
 <script setup>
 import {ref} from "vue";
-
+import {login_cmd} from "@/composables/user/user-cmd.js"
 /**
  * 登录
  */
-const usernameIpt = ref("")
-const passwordIpt = ref("")
+const idIpt = ref("1")
+const passwordIpt = ref("123")
+const identityIpt = ref(1)
 
 </script>
 

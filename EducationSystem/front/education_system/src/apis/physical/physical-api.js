@@ -1,4 +1,4 @@
-import http from "../../utils.http"
+import http from "../../utils/http"
 
 // 查看体侧成绩
 export function physical_info_api(student_id, class_id, semester, identity){

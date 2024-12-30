@@ -1,4 +1,5 @@
-import http from "@/utils/http";
+import http from "../../utils/http"
+
 // 教师 - 查看学生基础信息
 export function student_info_api(identity, class_id){
   return http.get("/course/info",{
