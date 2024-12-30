@@ -30,11 +30,17 @@ const router = createRouter({
                     component: () => import("@/page/student/StudentInfo.vue")
                 },
                 {
-                    // 学生成绩
+                    // 成绩
                     path: 'score',
                     name: 'Score',
                     component: () => import("@/page/student/Score.vue")
                 },
+                {
+                    // 荣誉
+                    path: 'honor',
+                    name: 'Honor',
+                    component: () =>  import("@/page/student/Honor.vue")
+                }
             ]
         },
 

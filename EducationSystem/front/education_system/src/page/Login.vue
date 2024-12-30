@@ -36,7 +36,7 @@ const passwordIpt = ref("")
 <style lang="scss" scoped>
 .main {
   width: 500px;
-  height: 330px;
+  height: 360px;
   margin: 150px auto;
   padding: 20px 50px;
   border: 5px solid transparent; /* 透明边框 */

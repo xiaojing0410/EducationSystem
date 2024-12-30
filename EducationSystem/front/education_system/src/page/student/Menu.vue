@@ -18,7 +18,13 @@
 
       <router-link :to="{name: 'Score'}">
         <el-menu-item index="1">
-          我的成绩单
+          成绩单
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Honor'}">
+        <el-menu-item index="2">
+          荣誉
         </el-menu-item>
       </router-link>
 
