@@ -21,11 +21,15 @@
 <!--      </el-descriptions-item>-->
 
       <el-descriptions-item label="用户名">
-        <el-input v-model="userinfo.username" />
+        {{ userinfo.username }}
       </el-descriptions-item>
 
       <el-descriptions-item label="性别">
-        <el-input v-model="userinfo.gender" />
+        {{ userinfo.gender }}
+      </el-descriptions-item>
+
+      <el-descriptions-item label="身份(1学生 2老师)">
+        2
       </el-descriptions-item>
 
       <el-descriptions-item label="手机号">
@@ -36,8 +40,16 @@
         <el-input v-model="userinfo.email" />
       </el-descriptions-item>
 
+      <el-descriptions-item label="旧密码">
+        <el-input v-model="oldpassword" />
+      </el-descriptions-item>
+
+      <el-descriptions-item label="密码(修改密码前，必须输入旧密码)">
+        <el-input v-model="userinfo.password" />
+      </el-descriptions-item>
+
       <el-descriptions-item label="修改时间">
-        <el-input v-model="userinfo.updatetime" />
+        {{ userinfo.updatetime }}
       </el-descriptions-item>
 
     </el-descriptions>
@@ -50,12 +62,14 @@
 </template>
 
 <script setup>
+const oldpassword = ref()
 const userinfo = ref({
   id: '12',
   username: '龙洋静',
   gender: '女',
   email: 'www.baidu.com',
   phone: '13895642222',
+  password: '',
   // createtime: '2024.01.12',
   updatetime: '2024.01.12'
 })

@@ -5,20 +5,22 @@ const router = createRouter({
         {
             redirect: '/login',
         },
-        // 权限相关
+
         {
+            // 登录
             path: '/login',
             name: 'Login',
             component: () => import("@/page/Login.vue")
         },
         {
+            // 注册
             path: '/reg',
             name: 'Reg',
             component: () => import("@/page/Reg.vue")
         },
 
-        //学生
         {
+            //学生
             path: '/student',
             children: [
                 {
@@ -30,11 +32,12 @@ const router = createRouter({
             ]
         },
 
-        //教师
         {
+            //教师
             path: '/teacher',
             children: [
                 {
+                    // 个人信息
                     path: 'info',
                     name: 'TeacherInfo',
                     component: () => import("@/page/teacher/TeacherInfo.vue")

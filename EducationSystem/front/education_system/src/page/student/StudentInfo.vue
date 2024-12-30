@@ -21,39 +21,51 @@
 <!--      </el-descriptions-item>-->
 
       <el-descriptions-item label="用户名">
-        <el-input v-model="userinfo.username" />
+        {{ userinfo.username }}
       </el-descriptions-item>
 
       <el-descriptions-item label="性别">
-        <el-input v-model="userinfo.gender" />
+        {{ userinfo.gender }}
+      </el-descriptions-item>
+
+      <el-descriptions-item label="学年制">
+        {{ userinfo.year }}
+      </el-descriptions-item>
+
+      <el-descriptions-item label="专业">
+        {{ userinfo.major }}
+      </el-descriptions-item>
+
+      <el-descriptions-item label="班级id">
+        {{ userinfo.class_id }}
+      </el-descriptions-item>
+
+      <el-descriptions-item label="身份(1学生 2老师)">
+        1
       </el-descriptions-item>
 
       <el-descriptions-item label="手机号">
         <el-input v-model="userinfo.phone" />
       </el-descriptions-item>
 
-      <el-descriptions-item label="学年制">
-        <el-input v-model="userinfo.year" />
-      </el-descriptions-item>
-
-      <el-descriptions-item label="专业">
-        <el-input v-model="userinfo.major" />
-      </el-descriptions-item>
-
-      <el-descriptions-item label="班级id">
-        <el-input v-model="userinfo.class_id" />
-      </el-descriptions-item>
-
       <el-descriptions-item label="邮箱">
         <el-input v-model="userinfo.email" />
       </el-descriptions-item>
 
+      <el-descriptions-item label="旧密码">
+        <el-input v-model="oldpassword" />
+      </el-descriptions-item>
+
+      <el-descriptions-item label="密码(修改密码前，必须输入旧密码)">
+        <el-input v-model="userinfo.password" />
+      </el-descriptions-item>
+
       <el-descriptions-item label="创建时间">
-        <el-input v-model="userinfo.createtime" />
+        {{ userinfo.createtime }}
       </el-descriptions-item>
 
       <el-descriptions-item label="修改时间">
-        <el-input v-model="userinfo.updatetime" />
+        {{ userinfo.updatetime }}
       </el-descriptions-item>
 
     </el-descriptions>
@@ -66,6 +78,7 @@
 </template>
 
 <script setup>
+const oldpassword = ref()
 const userinfo = ref({
   id: '12',
   username: '龙洋静',
@@ -75,6 +88,7 @@ const userinfo = ref({
   gender: '女',
   email: 'www.baidu.com',
   phone: '13895642222',
+  password: '',
   createtime: '2024.01.12',
   updatetime: '2024.01.12'
 })
