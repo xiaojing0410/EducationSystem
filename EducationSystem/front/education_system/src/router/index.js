@@ -66,6 +66,12 @@ const router = createRouter({
                     name: 'TInfo',
                     component: () => import("@/page/teacher/TInfo.vue")
                 },
+                {
+                    // 学生信息
+                    path: 'student_info',
+                    name: 'TStudentInfo',
+                    component: () => import("@/page/teacher/TStudentInfo.vue")
+                },
             ]
         }
 

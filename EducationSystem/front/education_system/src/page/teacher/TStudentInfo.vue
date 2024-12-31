@@ -2,20 +2,23 @@
   <div id="student">
     <!-- 查询区  -->
     <div class="query">
-      <el-input class="ipt" v-model="queryScoreReq.semester" placeholder="请输入学期号" />
+      <el-input class="ipt" v-model="queryStudentReq.studentId" placeholder="请输入学生id" />
+      <el-input class="ipt" v-model="queryStudentReq.classId" placeholder="请输入班级id" />
       <el-button class="btn" type="primary" plain>查询</el-button>
     </div>
 
     <!--  学生信息列表  -->
     <div class="list">
       <el-table :data="studentList" style="width: 100%" height="600">
-        <el-table-column prop="semester" label="学期" />
-        <el-table-column prop="sprint" label="冲刺" />
-        <el-table-column prop="run" label="跑步" />
-        <el-table-column prop="sit_up" label="立定跳远" />
-        <el-table-column prop="jump" label="跳高" />
-        <el-table-column prop="height" label="升高" />
-        <el-table-column prop="weight" label="体重" />
+        <el-table-column prop="id" label="学生ID" />
+        <el-table-column prop="username" label="用户名" />
+        <el-table-column prop="year" label="学年制" />
+        <el-table-column prop="major" label="专业" />
+        <el-table-column prop="class_id" label="班级id" />
+        <el-table-column prop="gender" label="性别" />
+        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="phone" label="手机号" />
+        <el-table-column prop="createtime" label="创建时间" />
       </el-table>
     </div>
   </div>
@@ -23,22 +26,26 @@
 
 <script setup>
 
-//成绩查询参数
-const queryScoreReq = ref({
-  semester: null
+//学生信息查询参数
+const queryStudentReq = ref({
+  studentId: null,
+  classId: null,
 })
 
 // 体测成绩列表
-const scoreList = ref([
+const studentList = ref([
   {
-    // student_id: 1, 查询自己的体育成绩，这个就没必要展示了
-    semester: 1,
-    sprint: 9.8,
-    run: 3.55,
-    sit_up: 38,
-    jump: 186,
-    height: 150,
-    weight: 40
+    id: '12',
+    username: '龙洋静',
+    year: '4', // 学年制
+    major: '软件工程', // 专业
+    class_id: '1', // 班级id
+    gender: '女',
+    email: 'www.baidu.com',
+    phone: '13895642222',
+    // password: '', // 不展示
+    createtime: '2024.01.12',
+    // updatetime: '2024.01.12' // 这个不展示，没必要
   }
 ])
 

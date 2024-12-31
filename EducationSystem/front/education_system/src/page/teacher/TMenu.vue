@@ -16,6 +16,12 @@
         />
       </el-menu-item>
 
+      <router-link :to="{name: 'TStudentInfo'}">
+        <el-menu-item index="1">
+          学生信息查询
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'TInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}
