@@ -28,8 +28,14 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Honor'}">
+      <router-link :to="{name: 'Course'}">
         <el-menu-item index="3">
+          课程信息
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Honor'}">
+        <el-menu-item index="4">
           荣誉
         </el-menu-item>
       </router-link>

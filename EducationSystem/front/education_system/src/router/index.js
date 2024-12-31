@@ -46,6 +46,12 @@ const router = createRouter({
                     path: 'physical',
                     name: 'Physical',
                     component: () =>  import("@/page/student/Physical.vue")
+                },
+                {
+                    // 课程
+                    path: 'course',
+                    name: 'Course',
+                    component: () =>  import("@/page/student/Course.vue")
                 }
             ]
         },
