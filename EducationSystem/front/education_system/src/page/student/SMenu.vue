@@ -42,7 +42,7 @@
 
       <router-link :to="{name: 'SInfo'}">
         <el-menu-item index="5">
-          欢迎回来 {{ }}
+          学生，你好！欢迎回来 {{ }}
         </el-menu-item>
       </router-link>
 

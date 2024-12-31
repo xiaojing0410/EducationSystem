@@ -34,9 +34,15 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'TCourse'}">
+        <el-menu-item index="4">
+          学生课程
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'TInfo'}">
         <el-menu-item index="5">
-          欢迎回来 {{ }}
+          老师，您好！欢迎回来 {{ }}
         </el-menu-item>
       </router-link>
 

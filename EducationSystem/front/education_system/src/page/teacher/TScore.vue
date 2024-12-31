@@ -50,9 +50,7 @@
 
         <el-table-column label="操作" width="180">
           <template v-slot="scope">
-            <el-button size="small" type="primary" @click="editScore(scope.row)">
-              {{ scope.row.isEditing ? '保存' : '修改' }}
-            </el-button>
+            <el-button size="small" type="primary" @click="editScore(scope.row)">修改</el-button>
             <el-button size="small" type="danger" @click="deleteScore(scope.row)">删除</el-button>
           </template>
         </el-table-column>
