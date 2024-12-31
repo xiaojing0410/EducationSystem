@@ -22,6 +22,12 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'TScore'}">
+        <el-menu-item index="2">
+          学生成绩
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'TInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}
