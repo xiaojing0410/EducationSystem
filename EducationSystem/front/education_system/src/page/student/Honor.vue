@@ -42,10 +42,9 @@
 </template>
 
 <script setup>
-
-// 申请荣誉请求
 import { ElMessage } from "element-plus";
 
+// 申请荣誉请求
 const applyHonorReq = ref({
   honor_name: "",
   award_date: "",

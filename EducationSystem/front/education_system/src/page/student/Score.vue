@@ -24,6 +24,13 @@
 
     <hr>
 
+    <!--  荣誉查询区  -->
+    <div class="query">
+      <el-input class="ipt" v-model="queryScoreReq.courseName" placeholder="请输入课程名称" />
+      <el-input class="ipt" v-model="queryScoreReq.semester" placeholder="请输入课程id" />
+      <el-button class="btn" type="primary" plain>查询</el-button>
+    </div>
+
     <!--  成绩列表  -->
     <div class="list">
       <el-table :data="scoreList" style="width: 100%" height="600">
@@ -49,6 +56,12 @@ const scoreSuggest = ref({
   1: "需要及时联系老师补考或重修了哦"
 })
 
+// 成绩单查询参数
+const queryScoreReq = ref({
+  courseName: "",
+  semester: null
+})
+
 // 成绩列表
 const scoreList = ref([
     {
@@ -70,9 +83,27 @@ const scoreList = ref([
 #score .warn {
   margin: 20px auto;
 }
-
 #score .list {
   margin: 20px auto;
+}
+
+#score .query {
+  width: 1200px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+
+  .ipt {
+    width: 250px;
+    height: 45px;
+    margin-right: 10px;
+  }
+
+  .btn {
+    width: 100px;
+    height: 45px;
+  }
 }
 
 </style>
