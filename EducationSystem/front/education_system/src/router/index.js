@@ -40,6 +40,12 @@ const router = createRouter({
                     path: 'honor',
                     name: 'Honor',
                     component: () =>  import("@/page/student/Honor.vue")
+                },
+                {
+                    // 体测
+                    path: 'physical',
+                    name: 'Physical',
+                    component: () =>  import("@/page/student/Physical.vue")
                 }
             ]
         },

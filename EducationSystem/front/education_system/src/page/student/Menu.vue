@@ -18,12 +18,18 @@
 
       <router-link :to="{name: 'Score'}">
         <el-menu-item index="1">
-          成绩单
+          文化课成绩
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Physical'}">
+        <el-menu-item index="2">
+          体测成绩
         </el-menu-item>
       </router-link>
 
       <router-link :to="{name: 'Honor'}">
-        <el-menu-item index="2">
+        <el-menu-item index="3">
           荣誉
         </el-menu-item>
       </router-link>
