@@ -28,6 +28,12 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'THonor'}">
+        <el-menu-item index="3">
+          学生荣誉
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'TInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}

@@ -78,6 +78,12 @@ const router = createRouter({
                     name: 'TScore',
                     component: () => import("@/page/teacher/TScore.vue")
                 },
+                {
+                    // 学生荣誉
+                    path: 'honor',
+                    name: 'THonor',
+                    component: () => import("@/page/teacher/THonor.vue")
+                },
             ]
         }
 
