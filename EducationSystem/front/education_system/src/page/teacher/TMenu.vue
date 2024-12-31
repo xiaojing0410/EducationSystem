@@ -16,7 +16,7 @@
         />
       </el-menu-item>
 
-      <router-link :to="{name: 'TeacherInfo'}">
+      <router-link :to="{name: 'TInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}
         </el-menu-item>

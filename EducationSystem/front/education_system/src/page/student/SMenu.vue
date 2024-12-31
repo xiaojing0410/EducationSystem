@@ -16,31 +16,31 @@
         />
       </el-menu-item>
 
-      <router-link :to="{name: 'Score'}">
+      <router-link :to="{name: 'SScore'}">
         <el-menu-item index="1">
           文化课成绩
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Physical'}">
+      <router-link :to="{name: 'SPhysical'}">
         <el-menu-item index="2">
           体测成绩
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Course'}">
+      <router-link :to="{name: 'SCourse'}">
         <el-menu-item index="3">
           课程信息
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Honor'}">
+      <router-link :to="{name: 'SHonor'}">
         <el-menu-item index="4">
           荣誉
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'StudentInfo'}">
+      <router-link :to="{name: 'SInfo'}">
         <el-menu-item index="5">
           欢迎回来 {{ }}
         </el-menu-item>

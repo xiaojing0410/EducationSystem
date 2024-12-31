@@ -26,32 +26,32 @@ const router = createRouter({
                 {
                     // 个人信息
                     path: 'info',
-                    name: 'StudentInfo',
-                    component: () => import("@/page/student/StudentInfo.vue")
+                    name: 'SInfo',
+                    component: () => import("@/page/student/SInfo.vue")
                 },
                 {
                     // 成绩
                     path: 'score',
-                    name: 'Score',
-                    component: () => import("@/page/student/Score.vue")
+                    name: 'SScore',
+                    component: () => import("@/page/student/SScore.vue")
                 },
                 {
                     // 荣誉
                     path: 'honor',
-                    name: 'Honor',
-                    component: () =>  import("@/page/student/Honor.vue")
+                    name: 'SHonor',
+                    component: () =>  import("@/page/student/SHonor.vue")
                 },
                 {
                     // 体测
                     path: 'physical',
-                    name: 'Physical',
-                    component: () =>  import("@/page/student/Physical.vue")
+                    name: 'SPhysical',
+                    component: () =>  import("@/page/student/SPhysical.vue")
                 },
                 {
                     // 课程
                     path: 'course',
-                    name: 'Course',
-                    component: () =>  import("@/page/student/Course.vue")
+                    name: 'SCourse',
+                    component: () =>  import("@/page/student/SCourse.vue")
                 }
             ]
         },
@@ -63,8 +63,8 @@ const router = createRouter({
                 {
                     // 个人信息
                     path: 'info',
-                    name: 'TeacherInfo',
-                    component: () => import("@/page/teacher/TeacherInfo.vue")
+                    name: 'TInfo',
+                    component: () => import("@/page/teacher/TInfo.vue")
                 },
             ]
         }
