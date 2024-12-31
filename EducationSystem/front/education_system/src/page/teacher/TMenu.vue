@@ -40,8 +40,14 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'TInfo'}">
+      <router-link :to="{name: 'TPhysical'}">
         <el-menu-item index="5">
+          学生体测成绩
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'TInfo'}">
+        <el-menu-item index="6">
           老师，您好！欢迎回来 {{ }}
         </el-menu-item>
       </router-link>

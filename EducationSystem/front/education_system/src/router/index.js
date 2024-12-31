@@ -90,6 +90,12 @@ const router = createRouter({
                     name: 'TCourse',
                     component: () => import("@/page/teacher/TCourse.vue")
                 },
+                {
+                    // 学生体测成绩
+                    path: 'physical',
+                    name: 'TPhysical',
+                    component: () => import("@/page/teacher/TPhysical.vue")
+                },
             ]
         }
 
