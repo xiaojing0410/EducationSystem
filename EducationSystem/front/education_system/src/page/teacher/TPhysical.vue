@@ -13,8 +13,13 @@
       </div>
 
       <div class="row">
-        <span>冲刺</span>
+        <span>50m短跑</span>
         <el-input v-model="addScoreReq.sprint" class="ipt" />
+      </div>
+
+      <div class="row">
+        <span>长跑</span>
+        <el-input v-model="addScoreReq.run" class="ipt" />
       </div>
 
       <div class="row">
@@ -36,7 +41,7 @@
         <span>体重</span>
         <el-input v-model="addScoreReq.weight" class="ipt" />
       </div>
-      <el-button type="primary" plain>批量新增/新增 学生体测成绩</el-button>
+      <el-button type="primary" plain @click="add_physical_cmd(addScoreReq.student_id, addScoreReq.semester, addScoreReq.sprint, addScoreReq.run, addScoreReq.sit_up, addScoreReq.jump, addScoreReq.height, addScoreReq.weight)">新增学生体测成绩</el-button>
     </div>
 
     <hr>
@@ -46,7 +51,7 @@
       <el-input class="ipt" v-model="queryScoreReq.student_id" placeholder="请输入学生id" />
       <el-input class="ipt" v-model="queryScoreReq.class_id" placeholder="请输入班级id" />
       <el-input class="ipt" v-model="queryScoreReq.semester" placeholder="请输入学期" />
-      <el-button class="btn" type="primary" plain>查询</el-button>
+      <el-button class="btn" type="primary" plain @click="score_by_semester()">查询</el-button>
     </div>
 
     <!--  成绩列表  -->
@@ -66,16 +71,19 @@
 </template>
 
 <script setup>
+import { physical_info_cmd, add_physical_cmd } from "@/composables/physical/physical-cmd.js"
+
+
 // 添加体测成绩参数
 const addScoreReq = ref({
-  student_id: null,
-  semester: null,
-  sprint: null,
-  run: null,
-  sit_up: null,
-  jump: null,
-  height: null,
-  weight: null
+  student_id: 1,
+  semester: 4,
+  sprint: 7.89,
+  run: 4.10,
+  sit_up: 30,
+  jump: 180,
+  height: 156,
+  weight: 45
 })
 
 // 成绩单查询参数
@@ -86,18 +94,18 @@ const queryScoreReq = ref({
 })
 
 // 成绩列表
-const scoreList = ref([
-    {
-      student_id: 1,
-      semester: 1,
-      sprint: 9.8,
-      run: 3.55,
-      sit_up: 38,
-      jump: 186,
-      height: 150,
-      weight: 40
-    }
-])
+const scoreList = ref()
+onBeforeMount(()=> {
+  // // 查询体测成绩
+  // const score_list = async () => {
+  //   scoreList.value = await physical_info_cmd()
+  // }
+  // score_list()
+})
+// 查询体测成绩
+const score_by_semester = async () => {
+  scoreList.value = await physical_info_cmd(queryScoreReq.value.student_id, queryScoreReq.value.class_id, queryScoreReq.value.semester)
+}
 
 </script>
 
@@ -114,7 +122,7 @@ const scoreList = ref([
   .row {
     display: flex;
     justify-content: left;
-
+    margin-bottom: 10px;
     span {
       width: 80px;
     }

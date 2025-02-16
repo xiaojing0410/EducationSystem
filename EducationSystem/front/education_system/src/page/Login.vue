@@ -16,7 +16,7 @@
         <router-link class="note" :to="{name: 'Reg'}">还没有账号？点我注册</router-link>
       </div>
       <div class="btn">
-        <el-button class="login-btn" type="primary" @click="login_cmd(idIpt, passwordIpt, identityIpt)">登录</el-button>
+        <el-button class="login-btn" type="primary" @click="login_cmd(idIpt, passwordIpt)">登录</el-button>
       </div>
     </div>
   </div>
@@ -28,7 +28,7 @@ import {login_cmd} from "@/composables/user/user-cmd.js"
 /**
  * 登录
  */
-const idIpt = ref("1")
+const idIpt = ref("1000")
 const passwordIpt = ref("123")
 const identityIpt = ref(1)
 

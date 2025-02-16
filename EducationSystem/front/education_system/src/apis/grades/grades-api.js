@@ -11,12 +11,25 @@ export function student_one_grades_api(courseName, semester){
   })
 }
 
+// 教师 - 查询学生成绩
+export function students_grades_api(class_id, course_name, student_id, semester){
+  return http.get("/grades/students",{
+    params:{
+      class_id: class_id,
+      course_name: course_name,
+      student_id: student_id,
+      semester: semester
+    }
+  })
+}
+
 // 教师 - 删除成绩
-export function delete_grades_api(user_id, class_id, course_id){
+export function delete_grades_api(user_id, class_id, course_id, grades_id){
   return http.post("/grades/delete",{
     user_id: user_id,
     class_id: class_id,
-    course_id: course_id
+    course_id: course_id,
+    grades_id: grades_id
   })
 }
 
@@ -41,12 +54,13 @@ export function adds_grades_api(course_id, semester, score, student_id){
 }
 
 // 教师 - 修改成绩
-export function update_grades_api(course_id, student_id, semester, score){
+export function update_grades_api(course_id, student_id, semester, score, grades_id){
   return http.post("/grades/update",{
     course_id: course_id,
     semester: semester,
     score: score,
-    student_id: student_id
+    student_id: student_id,
+    grades_id: grades_id
   })
 }
 

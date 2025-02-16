@@ -35,10 +35,10 @@ export function user_info_api(identity){
 
 
 // 修改用户信息
-export function update_user_info(oldpassword, password, email, phone, identity){
+export function update_user_info_api(oldpassword, password, email, phone, identity){
   return http.post("/user/update",{
     oldpassword: oldpassword,
-    password: oldpassword,
+    password: password,
     email: email,
     phone: phone,
     identity: identity

@@ -48,11 +48,11 @@
 
       <router-link :to="{name: 'TInfo'}">
         <el-menu-item index="6">
-          老师，您好！欢迎回来 {{ }}
+          个人信息
         </el-menu-item>
       </router-link>
 
-      <el-menu-item index="6" >
+      <el-menu-item index="6" @click="logout_cmd()">
         退出登录
       </el-menu-item>
     </el-menu>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-
+import {logout_cmd} from "@/composables/user/user-cmd.js"
 </script>
 
 <style lang="scss" scoped>

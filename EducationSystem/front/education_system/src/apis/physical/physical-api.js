@@ -13,7 +13,7 @@ export function physical_info_api(student_id, class_id, semester, identity){
 }
 
 // 教师 - 添加体测成绩
-export function add_physical(student_id, semester, sprint, run, sit_up, jump, height, weight){
+export function add_physical_api(student_id, semester, sprint, run, sit_up, jump, height, weight){
   return http.post("/physical/add",{
     student_id: student_id,
     semester: semester,
@@ -28,7 +28,7 @@ export function add_physical(student_id, semester, sprint, run, sit_up, jump, he
 
 
 // 教师 - 批量添加体测成绩
-export function add_physical(student_id, semester, sprint, run, sit_up, jump, height, weight){
+export function adds_physical_api(student_id, semester, sprint, run, sit_up, jump, height, weight){
   return http.post("/physical/adds",{
     student_id: student_id,
     semester: semester,

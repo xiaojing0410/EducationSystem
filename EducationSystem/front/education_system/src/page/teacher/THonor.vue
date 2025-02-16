@@ -2,9 +2,9 @@
   <div id="honor">
     <!--  查询区  -->
     <div class="query">
-      <el-input class="ipt" v-model="queryHonorReq.studentId" placeholder="请输入课程名称" />
-      <el-input class="ipt" v-model="queryHonorReq.classId" placeholder="请输入课程id" />
-      <el-button class="btn" type="primary" plain>查询</el-button>
+      <el-input class="ipt" v-model="queryHonorReq.studentId" placeholder="请输入学号" />
+      <el-input class="ipt" v-model="queryHonorReq.classId" placeholder="请输入班级id" />
+      <el-button class="btn" type="primary" plain @click="get_honor_list()">查询</el-button>
     </div>
 
     <hr>
@@ -24,6 +24,8 @@
 </template>
 
 <script setup>
+import { student_honor_info_cmd } from "@/composables/honor/honor-cmd.js"
+
 // 荣誉查询参数
 const queryHonorReq = ref({
   studentId: null,
@@ -31,17 +33,19 @@ const queryHonorReq = ref({
 })
 
 // 荣誉列表
-const honorList = ref([
-  {
-    id: 8,
-    student_id: 1,
-    honor_name: "心理证书",
-    award_date: "2024-12-26",
-    type: 2,
-    state: null
-  }
-])
+const honorList = ref()
 
+onBeforeMount(()=> {
+  // 查询荣誉
+  const student_self_honor_info = async () => {
+    honorList.value = await student_honor_info_cmd(queryHonorReq.value.studentId, queryHonorReq.value.classId)
+  }
+  student_self_honor_info()
+})
+
+const get_honor_list = async() => {
+  honorList.value = await student_honor_info_cmd(queryHonorReq.value.studentId, queryHonorReq.value.classId)
+}
 </script>
 
 <style lang="scss" scoped>

@@ -10,12 +10,22 @@ const route = useRoute();
 const showMenu = computed(() => {
   return route.name !== 'Login' && route.name !== 'Reg'
 })
+
+// 判断当前路由是否包含 student，展示 SMenu
+const showSMenu = computed(() => {
+  return showMenu.value && route.path.includes('student');
+});
+
+// 判断当前路由是否包含 teacher，展示 TMenu
+const showTMenu = computed(() => {
+  return showMenu.value && route.path.includes('teacher');
+});
 </script>
 
 <template>
 
-  <SMenu v-if="showMenu"></SMenu>
-  <TMenu></TMenu>
+  <SMenu v-if="showSMenu"></SMenu>
+  <TMenu v-if="showTMenu"></TMenu>
 
   <router-view></router-view>
 </template>

@@ -22,6 +22,7 @@ const router = createRouter({
         {
             //学生
             path: '/student',
+            redirect: '/student/info',
             children: [
                 {
                     // 个人信息
@@ -59,6 +60,7 @@ const router = createRouter({
         {
             //教师
             path: '/teacher',
+            redirect: '/teacher/info',
             children: [
                 {
                     // 个人信息
@@ -68,7 +70,7 @@ const router = createRouter({
                 },
                 {
                     // 学生信息
-                    path: 'student_info',
+                    path: 'stu_info',
                     name: 'TStudentInfo',
                     component: () => import("@/page/teacher/TStudentInfo.vue")
                 },
@@ -103,4 +105,11 @@ const router = createRouter({
     history: createWebHistory()
 })
 
+// router.beforeEach((to, from, next) => {
+//     if (to.fullPath !== from.fullPath) {
+//       // 强制刷新页面
+//       window.location.reload();
+//     }
+//     next();
+//   })
 export default router

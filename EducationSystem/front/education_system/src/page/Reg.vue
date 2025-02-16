@@ -11,10 +11,10 @@
           <span>密码: </span>
           <el-input class="password ipt" type="password" v-model="passwordIpt"/>
         </div>
-        <!-- <div class="row">
+        <div class="row">
           <span>权限: </span>
-          <el-input class="role ipt" type="text" placeholder="请输入数字(1学生 2教师)" v-model="roleIpt"/>
-        </div> -->
+          <el-input class="role ipt" type="text" placeholder="请输入数字(1学生 2教师)" v-model="identityIpt"/>
+        </div>
       </div>
       <div class="login">
         <router-link class="note" :to="{name: 'Login'}">返回到登录页面</router-link>
@@ -31,7 +31,7 @@ import {ref} from "vue";
 import {reg_cmd} from "@/composables/user/user-cmd.js"
 const usernameIpt = ref('lyj')
 const passwordIpt = ref('123')
-const identityIpt = ref(1)
+const identityIpt = ref()
 // const roleIpt = ref()
 
 </script>
@@ -39,7 +39,7 @@ const identityIpt = ref(1)
 <style lang="scss" scoped>
 .main {
   width: 500px;
-  height: 350px;
+  height: 400px;
   max-height: 100vh;
   margin: 150px auto;
   padding: 20px 50px;

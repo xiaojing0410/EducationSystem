@@ -28,8 +28,8 @@
         {{ userinfo.gender }}
       </el-descriptions-item>
 
-      <el-descriptions-item label="身份(1学生 2老师)">
-        2
+      <el-descriptions-item label="身份">
+        老师
       </el-descriptions-item>
 
       <el-descriptions-item label="手机号">
@@ -56,12 +56,14 @@
 
 <!--  操作区  -->
     <div id="opt">
-      <el-button class="btn" type="primary" plain>修改信息</el-button>
+      <el-button class="btn" type="primary" plain @click="update_user_info_cmd(oldpassword, userinfo.password, userinfo.email, userinfo.phone)">修改信息</el-button>
     </div>
   </div>
 </template>
 
 <script setup>
+import {update_user_info_cmd} from "@/composables/user/user-cmd"
+import { get_user_info } from "@/stores/user-local"
 const oldpassword = ref()
 const userinfo = ref({
   id: '12',
@@ -73,7 +75,9 @@ const userinfo = ref({
   // createtime: '2024.01.12',
   updatetime: '2024.01.12'
 })
-
+onBeforeMount(()=> {
+  userinfo.value = JSON.parse(get_user_info())
+})
 </script>
 
 <style lang="scss" scoped>

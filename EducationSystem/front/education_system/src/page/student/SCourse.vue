@@ -19,8 +19,10 @@
 </template>
 
 <script setup>
+import { course_info_cmd } from "@/composables/course/course-cmd.js"
+import { onBeforeMount } from "vue";
 
-// 体测成绩列表
+// 课程列表
 const courseList = ref([
   {
     id: 4,
@@ -29,6 +31,15 @@ const courseList = ref([
     class_id: 1
   }
 ])
+
+onBeforeMount(()=> {
+  // 查询课程
+  const course_info = async () => {
+    courseList.value = await course_info_cmd()
+  }
+  course_info()
+})
+
 
 </script>
 

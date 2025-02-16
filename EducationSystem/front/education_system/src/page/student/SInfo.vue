@@ -36,12 +36,8 @@
         {{ userinfo.major }}
       </el-descriptions-item>
 
-      <el-descriptions-item label="班级id">
+      <el-descriptions-item label="班级">
         {{ userinfo.class_id }}
-      </el-descriptions-item>
-
-      <el-descriptions-item label="身份(1学生 2老师)">
-        1
       </el-descriptions-item>
 
       <el-descriptions-item label="手机号">
@@ -60,25 +56,24 @@
         <el-input v-model="userinfo.password" />
       </el-descriptions-item>
 
-      <el-descriptions-item label="创建时间">
+      <el-descriptions-item label="入学时间">
         {{ userinfo.createtime }}
-      </el-descriptions-item>
-
-      <el-descriptions-item label="修改时间">
-        {{ userinfo.updatetime }}
       </el-descriptions-item>
 
     </el-descriptions>
 
-<!--  操作区  -->
+    <!--  操作区  -->
     <div id="opt">
-      <el-button class="btn" type="primary" plain>修改信息</el-button>
+      <el-button class="btn" type="primary" plain @click="update_user_info_cmd(oldpassword, userinfo.password, userinfo.email, userinfo.phone)">修改信息</el-button>
     </div>
   </div>
 </template>
 
 <script setup>
-const oldpassword = ref()
+import {update_user_info_cmd} from "@/composables/user/user-cmd"
+import { get_user_info } from "@/stores/user-local"
+
+const oldpassword = ref('')
 const userinfo = ref({
   id: '12',
   username: '龙洋静',
@@ -93,6 +88,9 @@ const userinfo = ref({
   updatetime: '2024.01.12'
 })
 
+onBeforeMount(()=> {
+  userinfo.value = JSON.parse(get_user_info())[0]
+})
 </script>
 
 <style lang="scss" scoped>
