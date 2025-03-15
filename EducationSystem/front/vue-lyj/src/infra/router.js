@@ -9,7 +9,17 @@ const router = createRouter({
         {
             name: 'UserInfo',
             path: '/userinfo',
-            component: () => import('../page/userinfo/UserInfo.vue')
+            component: () => import('../page/UserInfo.vue')
+        },
+        {
+            name: 'Honor',
+            path: '/honor',
+            component: () => import('../page/Honor.vue')
+        },
+        {
+            name: 'Physical',
+            path: '/physical',
+            component: () => import('../page/Physical.vue')
         }
     ],
     history: createWebHistory()

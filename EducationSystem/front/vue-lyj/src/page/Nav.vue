@@ -11,12 +11,18 @@
         <strong>学生学习成效智能评价系统</strong>
       </el-menu-item>
 
-      <el-menu-item index="1">
-        <span>用户管理</span>
-      </el-menu-item>
-      <el-menu-item index="2">
-        <span>荣誉管理</span>
-      </el-menu-item>
+      <router-link :to="{name: 'UserInfo'}">
+        <el-menu-item index="1">
+          <span>用户管理</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Honor'}">
+        <el-menu-item index="2">
+          <span>荣誉管理</span>
+        </el-menu-item>
+      </router-link>
+
       <el-menu-item index="3">
         <span>课程管理</span>
       </el-menu-item>
@@ -26,9 +32,13 @@
       <el-menu-item index="5">
         <span>成绩管理</span>
       </el-menu-item>
-      <el-menu-item index="6">
-        <span>体测中心</span>
-      </el-menu-item>
+
+      <router-link :to="{name: 'Physical'}">
+        <el-menu-item index="6">
+          <span>体测中心</span>
+        </el-menu-item>
+      </router-link>
+
       <el-menu-item index="7">
         <span>评测中心</span>
       </el-menu-item>
