@@ -6,6 +6,7 @@
         <el-input class="ipt" placeholder="请输入学生id" />
         <el-input class="ipt" placeholder="请输入班级id" />
         <el-button class="btn" type="primary">查询</el-button>
+        <el-button class="btn" type="warning" @click="applyHonorCmd.dialogVisible = true">申请荣誉</el-button>
       </div>
     </div>
 
@@ -37,9 +38,55 @@
         <el-table-column prop="classInfo.major" label="专业" />
         <el-table-column prop="classInfo.grade" label="班级" />
         <el-table-column prop="classInfo.year" label="学年" />
+        <el-table-column label="操作">
+          <template #default="{ row }">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+              <el-button
+                  type="success"
+                  plain
+                  @click="reviewHonorHandler(row.honor.honor_id, 1)"
+              >
+                通过
+              </el-button>
+              <el-button
+                  type="warning"
+                  plain
+                  @click="reviewHonorHandler(row.honor.honor_id, -1)"
+              >
+                不通过
+              </el-button>
+              <el-button
+                  v-if="row.honor.state === -1"
+                  type="danger"
+                  plain
+                  @click="removeHonorHandler(row.honor.honor_id)"
+              >
+                删除
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
-
     </div>
+
+    <el-dialog v-model="applyHonorCmd.dialogVisible" title="申请荣誉" width="500px">
+      <el-form :model="applyHonorCmd" label-width="100px">
+        <el-form-item label="荣誉名称">
+          <el-input v-model="applyHonorCmd.honor_name" placeholder="请输入荣誉名称" />
+        </el-form-item>
+        <el-form-item label="荣誉类型">
+          <el-radio-group v-model="applyHonorCmd.type">
+            <el-radio :label="0">其他</el-radio>
+            <el-radio :label="1">奖学金</el-radio>
+            <el-radio :label="2">证书</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="applyHonorCmd.dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="applyHonorHandler">提交</el-button>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -56,7 +103,7 @@ const honorTable = ref([
       "honor_name": "校级奖学金一等奖",
       "award_date": "2025-03-12",
       "type": 1,
-      "state": 1
+      "state": -1
     },
     "classInfo": {
       "class_id": 1,
@@ -67,6 +114,34 @@ const honorTable = ref([
     }
   },
 ])
+
+/**
+ * 申请荣誉
+ */
+const applyHonorCmd = ref({
+  dialogVisible: false,
+  honor_name: null,
+  type: null,
+})
+const applyHonorHandler = async () => {
+
+}
+
+/**
+ * 荣誉审核
+ * @param state 1通过 -1不通过
+ */
+const reviewHonorHandler = async (honor_id, state) => {
+
+}
+
+/**
+ * 删除荣誉
+ */
+const removeHonorHandler = async (honor_id) => {
+
+}
+
 
 </script>
 

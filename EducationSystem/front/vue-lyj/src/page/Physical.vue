@@ -41,8 +41,52 @@
         <el-table-column prop="classInfo.major" label="专业" />
         <el-table-column prop="classInfo.grade" label="年级" />
         <el-table-column prop="classInfo.year" label="学制 (年)" />
+        <el-table-column label="操作" >
+          <template #default="{ row }">
+            <el-button type="warning" @click="openUpdatePhysicalDialog(row)">编辑</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
+
+    <el-dialog v-model="updatePhysicalCmd.isShow" title="修改体测成绩" width="500px">
+      <el-form :model="updatePhysicalCmd" label-width="80px">
+        <el-form-item label="学号">
+          <el-input v-model.number="updatePhysicalCmd.student_id" disabled />
+        </el-form-item>
+        <el-form-item label="年级">
+          <el-input-number v-model="updatePhysicalCmd.year" :min="1" :max="6" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="updatePhysicalCmd.state">
+            <el-option :value="0" label="未测试" />
+            <el-option :value="1" label="已测试" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="短跑 (s)">
+          <el-input-number v-model="updatePhysicalCmd.sprint" :min="5" :max="20" :step="0.1" />
+        </el-form-item>
+        <el-form-item label="长跑 (min)">
+          <el-input-number v-model="updatePhysicalCmd.run" :min="2" :max="10" :step="0.01" />
+        </el-form-item>
+        <el-form-item label="仰卧起坐 (次)">
+          <el-input-number v-model="updatePhysicalCmd.sit_up" :min="0" :max="100" />
+        </el-form-item>
+        <el-form-item label="跳远 (cm)">
+          <el-input-number v-model="updatePhysicalCmd.jump" :min="100" :max="300" />
+        </el-form-item>
+        <el-form-item label="身高 (cm)">
+          <el-input-number v-model="updatePhysicalCmd.height" :min="100" :max="250" />
+        </el-form-item>
+        <el-form-item label="体重 (kg)">
+          <el-input-number v-model="updatePhysicalCmd.weight" :min="20" :max="200" :step="0.1" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="updatePhysicalCmd.isShow = false">取消</el-button>
+        <el-button type="primary" @click="">保存</el-button>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -73,6 +117,31 @@ const physicalTable = ref([
     }
   }
 ])
+
+const updatePhysicalCmd = ref({
+  isShow: false,
+  student_id: 10000,
+  year: 2,
+  sprint: 8.5,
+  run: 3.42,
+  sit_up: 25,
+  jump: 190,
+  height: 156,
+  weight: 50
+})
+const openUpdatePhysicalDialog = (row) => {
+  updatePhysicalCmd.value = {
+    isShow: true,
+    student_id: row.student_id,
+    year: row.physical.year,
+    sprint: row.physical.sprint,
+    run: row.physical.run,
+    sit_up: row.physical.sit_up,
+    jump: row.physical.jump,
+    height: row.physical.height,
+    weight: row.physical.weight
+  }
+}
 
 </script>
 
