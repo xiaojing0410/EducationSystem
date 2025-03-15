@@ -57,9 +57,11 @@
         </el-menu-item>
       </router-link>
 
-      <el-menu-item index="9">
-        <span>个人信息</span>
-      </el-menu-item>
+      <router-link :to="{name: 'SelfInfo'}">
+        <el-menu-item index="9">
+          <span>个人信息</span>
+        </el-menu-item>
+      </router-link>
 
     </el-menu>
 

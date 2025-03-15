@@ -50,6 +50,11 @@ const router = createRouter({
             name: 'Attendance',
             path: '/attendance',
             component: () => import('../page/Attendance.vue')
+        },
+        {
+            name: 'SelfInfo',
+            path: '/selfInfo',
+            component: () => import('../page/SelfInfo.vue')
         }
     ],
     history: createWebHistory()

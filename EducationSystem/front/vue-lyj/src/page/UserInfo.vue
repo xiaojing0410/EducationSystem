@@ -48,37 +48,37 @@
         <el-table-column prop="card_id" label="卡片号" />
         <el-table-column prop="dorm_id" label="宿舍号" />
         <el-table-column prop="create_time" label="创建时间" />
-        <el-table-column label="操作">
-          <template #default="{ row }">
-            <el-button type="warning" @click="openUpdateUserInfoDialog(row)">编辑</el-button>
-          </template>
-        </el-table-column>
+<!--        <el-table-column label="操作">-->
+<!--          <template #default="{ row }">-->
+<!--            <el-button type="warning" @click="openUpdateUserInfoDialog(row)">编辑</el-button>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
       </el-table>
     </div>
 
-    <!-- 编辑对话框 -->
-    <el-dialog v-model="updateUserInfoCmd.dialogVisible" title="编辑信息">
-      <el-form label-width="80px">
-        <el-form-item label="旧密码">
-          <el-input v-model="updateUserInfoCmd.oldpassword" type="password" />
-        </el-form-item>
-        <el-form-item label="新密码">
-          <el-input v-model="updateUserInfoCmd.password" type="password" />
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="updateUserInfoCmd.email" />
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="updateUserInfoCmd.phone" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span>
-          <el-button @click="updateUserInfoCmd.dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="">保存</el-button>
-        </span>
-      </template>
-    </el-dialog>
+<!--    &lt;!&ndash; 编辑对话框 &ndash;&gt;-->
+<!--    <el-dialog v-model="updateUserInfoCmd.dialogVisible" title="编辑信息">-->
+<!--      <el-form label-width="80px">-->
+<!--        <el-form-item label="旧密码">-->
+<!--          <el-input v-model="updateUserInfoCmd.oldpassword" type="password" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="新密码">-->
+<!--          <el-input v-model="updateUserInfoCmd.password" type="password" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="邮箱">-->
+<!--          <el-input v-model="updateUserInfoCmd.email" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="手机号">-->
+<!--          <el-input v-model="updateUserInfoCmd.phone" />-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+<!--      <template #footer>-->
+<!--        <span>-->
+<!--          <el-button @click="updateUserInfoCmd.dialogVisible = false">取消</el-button>-->
+<!--          <el-button type="primary" @click="">保存</el-button>-->
+<!--        </span>-->
+<!--      </template>-->
+<!--   </el-dialog>-->
 
   </div>
 </template>
@@ -113,21 +113,21 @@ const userTable = ref([
   }
 ])
 
-/**
- * 修改用户信息
- */
-const updateUserInfoCmd = ref({
-  dialogVisible: false,
-  oldpassword: null,
-  password: null,
-  email: null,
-  phone: null,
-})
-const openUpdateUserInfoDialog = (row) => {
-  updateUserInfoCmd.value.email = row.email
-  updateUserInfoCmd.value.phone = row.phone
-  updateUserInfoCmd.value.dialogVisible = true;
-};
+// /**
+//  * 修改用户信息
+//  */
+// const updateUserInfoCmd = ref({
+//   dialogVisible: false,
+//   oldpassword: null,
+//   password: null,
+//   email: null,
+//   phone: null,
+// })
+// const openUpdateUserInfoDialog = (row) => {
+//   updateUserInfoCmd.value.email = row.email
+//   updateUserInfoCmd.value.phone = row.phone
+//   updateUserInfoCmd.value.dialogVisible = true;
+// };
 
 </script>
 
