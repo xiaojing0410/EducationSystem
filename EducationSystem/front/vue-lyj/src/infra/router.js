@@ -7,6 +7,16 @@ const router = createRouter({
             redirect: '/userinfo'
         },
         {
+            name: 'Login',
+            path: '/login',
+            component: () => import('../page/Login.vue')
+        },
+        {
+            name: 'Reg',
+            path: '/reg',
+            component: () => import('../page/Reg.vue')
+        },
+        {
             name: 'UserInfo',
             path: '/userinfo',
             component: () => import('../page/UserInfo.vue')

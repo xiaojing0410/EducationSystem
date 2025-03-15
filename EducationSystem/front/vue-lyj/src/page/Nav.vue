@@ -52,7 +52,7 @@
       <div class="top-menu">
         <div class="col">用户名: {{ userinfo.username }}</div>
         <div class="col">角色: {{ userinfo.auth }}</div>
-        <div class="col" @click="logout">退出登录</div>
+        <div class="col" @click="logoutHandler">退出登录</div>
       </div>
 
       <!--   除了登录注册，所有的 router 渲染根基都在这里  -->
@@ -65,8 +65,16 @@
 
 <script setup>
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import router from "../infra/router.js";
 
 const userinfo = useUserInfoStore()
+
+const logoutHandler = () => {
+  if (!confirm("您确定要退出登录么？")) {
+    return
+  }
+  router.push({name: "Login"})
+}
 
 </script>
 
