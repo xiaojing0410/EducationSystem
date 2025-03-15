@@ -5,7 +5,7 @@
         background-color="#1E1E2E"
         text-color="#ABB2BF"
         class="el-menu-vertical-demo left-menu"
-        default-active="2"
+        default-active="0"
     >
       <el-menu-item index="0">
         <strong>学生学习成效智能评价系统</strong>
@@ -23,26 +23,41 @@
         </el-menu-item>
       </router-link>
 
-      <el-menu-item index="3">
-        <span>课程管理</span>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <span>考勤管理</span>
-      </el-menu-item>
-      <el-menu-item index="5">
+      <router-link :to="{name: 'Course'}">
+        <el-menu-item index="3">
+          <span>课程管理</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'CoursePlan'}">
+        <el-menu-item index="4">
+          <span>课程安排</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Attendance'}">
+        <el-menu-item index="5">
+          <span>考勤管理</span>
+        </el-menu-item>
+      </router-link>
+
+      <el-menu-item index="6">
         <span>成绩管理</span>
       </el-menu-item>
 
       <router-link :to="{name: 'Physical'}">
-        <el-menu-item index="6">
+        <el-menu-item index="7">
           <span>体测中心</span>
         </el-menu-item>
       </router-link>
 
-      <el-menu-item index="7">
-        <span>评测中心</span>
-      </el-menu-item>
-      <el-menu-item index="8">
+      <router-link :to="{name: 'Evaluation'}">
+        <el-menu-item index="8">
+          <span>评测中心</span>
+        </el-menu-item>
+      </router-link>
+
+      <el-menu-item index="9">
         <span>个人信息</span>
       </el-menu-item>
 

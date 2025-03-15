@@ -30,6 +30,26 @@ const router = createRouter({
             name: 'Physical',
             path: '/physical',
             component: () => import('../page/Physical.vue')
+        },
+        {
+            name: 'Evaluation',
+            path: '/evaluation',
+            component: () => import('../page/Evaluation.vue')
+        },
+        {
+            name: 'Course',
+            path: '/course',
+            component: () => import('../page/Course.vue')
+        },
+        {
+            name: 'CoursePlan',
+            path: '/course_plan',
+            component: () => import('../page/CoursePlan.vue')
+        },
+        {
+            name: 'Attendance',
+            path: '/attendance',
+            component: () => import('../page/Attendance.vue')
         }
     ],
     history: createWebHistory()

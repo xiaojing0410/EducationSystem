@@ -26,7 +26,7 @@
     <!-- 数据区 -->
     <div class="data">
       <el-table :data="userTable" border style="width: 100%">
-        <el-table-column prop="user_id" label="消息id" />
+        <el-table-column prop="user_id" label="用户id" />
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="gender" label="性别" />
         <el-table-column prop="email" label="邮箱" />
