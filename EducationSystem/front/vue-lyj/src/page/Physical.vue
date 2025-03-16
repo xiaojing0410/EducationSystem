@@ -21,6 +21,7 @@
         <el-table-column prop="username" label="姓名" />
 
         <!-- 体测信息 -->
+        <el-table-column prop="physical.physical_id" label="体测id" />
         <el-table-column label="体测状态">
           <template #default="{ row }">
             <el-tag :type="row.physical.state === 1 ? 'success' : 'warning'">
@@ -51,11 +52,8 @@
 
     <el-dialog v-model="updatePhysicalCmd.isShow" title="修改体测成绩" width="500px">
       <el-form :model="updatePhysicalCmd" label-width="80px">
-        <el-form-item label="学号">
-          <el-input v-model.number="updatePhysicalCmd.student_id" disabled />
-        </el-form-item>
-        <el-form-item label="年级">
-          <el-input-number v-model="updatePhysicalCmd.year" :min="1" :max="6" />
+        <el-form-item label="体测id">
+          <el-input v-model.number="updatePhysicalCmd.physical_id" disabled />
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="updatePhysicalCmd.state">
@@ -95,51 +93,50 @@
 // 数据区
 const physicalTable = ref([
   {
-    "student_id": 10000,
-    "username": "龙洋静",
-    "physical": {
-      "student_id": 10000,
-      "year": 1,
-      "state": 1, // 0表示未测试，1表示已测试
-      "sprint": 9.8,
-      "run": 3.55,
-      "sit_up": 38,
-      "jump": 186,
-      "height": 150,
-      "weight": 40
+    student_id: 10000,
+    username: "龙洋静",
+    physical: {
+      physical_id: 1,
+      student_id: 10000,
+      year: 1,
+      state: 1, // 0表示未测试，1表示已测试
+      sprint: 9.8,
+      run: 3.55,
+      sit_up: 38,
+      jump: 186,
+      height: 150,
+      weight: 40
     },
-    "classInfo": {
-      "class_id": 1,
-      "college": "信息工程学院",
-      "major": "软件工程",
-      "grade": 1,
-      "year": 4
+    classInfo: {
+      class_id: 1,
+      college: "信息工程学院",
+      major: "软件工程",
+      grade: 1,
+      year: 4
     }
   }
 ])
 
 const updatePhysicalCmd = ref({
   isShow: false,
-  student_id: 10000,
-  year: 2,
-  sprint: 8.5,
-  run: 3.42,
-  sit_up: 25,
-  jump: 190,
-  height: 156,
-  weight: 50
+  physical_id: null,
+  sprint: null,
+  run: null,
+  sit_up: null,
+  jump: null,
+  height: null,
+  weight: null,
 })
 const openUpdatePhysicalDialog = (row) => {
   updatePhysicalCmd.value = {
     isShow: true,
-    student_id: row.student_id,
-    year: row.physical.year,
+    physical_id: row.physical.physical_id,
     sprint: row.physical.sprint,
     run: row.physical.run,
     sit_up: row.physical.sit_up,
     jump: row.physical.jump,
     height: row.physical.height,
-    weight: row.physical.weight
+    weight: row.physical.weight,
   }
 }
 

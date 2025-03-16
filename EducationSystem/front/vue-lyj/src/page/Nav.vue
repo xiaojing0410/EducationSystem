@@ -17,6 +17,12 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'Class'}">
+        <el-menu-item index="1.1">
+          <span>班级管理</span>
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'Honor'}">
         <el-menu-item index="2">
           <span>荣誉管理</span>
