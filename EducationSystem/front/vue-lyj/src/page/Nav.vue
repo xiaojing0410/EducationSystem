@@ -41,9 +41,11 @@
         </el-menu-item>
       </router-link>
 
-      <el-menu-item index="6">
-        <span>成绩管理</span>
-      </el-menu-item>
+      <router-link :to="{name: 'Grades'}">
+        <el-menu-item index="6">
+          <span>成绩管理</span>
+        </el-menu-item>
+      </router-link>
 
       <router-link :to="{name: 'Physical'}">
         <el-menu-item index="7">
