@@ -1,13 +1,13 @@
-import {ax} from "../infra/axiosCfg.js";
+import {api} from "../infra/axiosCfg.js";
 
 
 /**
  * 注册
  */
-const regApi = async (
+export const regApi = async (
     { identity, username, password, gender, card_id, dorm_id, class_id, student_array }
 ) => {
-    return await ax.post(
+    return await api.post(
         "/user/reg",
         {
             identity, username, password, gender, card_id, dorm_id, class_id, student_array
@@ -18,10 +18,10 @@ const regApi = async (
 /**
  * 登录
  */
-const loginApi = async (
+export const loginApi = async (
     { user_id, password }
 ) => {
-    return await ax.post(
+    return await api.post(
         "/user/login",
         { user_id, password }
     )
@@ -30,10 +30,10 @@ const loginApi = async (
 /**
  * 查询用户信息
  */
-const queryUserinfoApi = async (
+export const queryUserinfoApi = async (
     { class_id, major, student_id, admin_id, teacher_id }
 ) => {
-    return await ax.get(
+    return await api.get(
         "/user/userinfo",
         {
             params: {
@@ -46,10 +46,10 @@ const queryUserinfoApi = async (
 /**
  * 修改用户信息
  */
-const updateUserinfoApi = async (
+export const updateUserinfoApi = async (
     { oldpassword, password, email, phone, identity }
 ) => {
-    return await ax.post(
+    return await api.post(
         "/user/update",
         { oldpassword, password, email, phone, identity }
     )

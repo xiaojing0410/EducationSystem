@@ -104,6 +104,8 @@
 
 <script setup>
 
+import {queryUserinfoApi} from "../api/UserinfoApi.js";
+
 const userTable = ref({
   user_id: 10003,
   username: "小静",
@@ -123,6 +125,28 @@ const userTable = ref({
   card_id: "610902200107128841",
   dorm_id: "10-207",
   student_array: null
+})
+
+/**
+ * 查询个人信息
+ */
+const querySelfInfoHandler = async () => {
+  const resp = await queryUserinfoApi({})
+  const user = resp.data[0]
+  userTable.value.user_id = user.user_id
+  userTable.value.username = user.username
+  userTable.value.gender = user.gender
+  userTable.value.email = user.email
+  userTable.value.phone = user.phone
+  userTable.value.create_time = user.create_time
+  userTable.value.classInfo = user.classInfo
+  userTable.value.current_state = user.current_state
+  userTable.value.card_id = user.card_id
+  userTable.value.dorm_id = user.dorm_id
+  userTable.value.student_array = user.student_array
+}
+onMounted(async () => {
+  await querySelfInfoHandler()
 })
 
 </script>

@@ -2,14 +2,14 @@ import axios from 'axios'
 import {ElMessage} from "element-plus";
 
 //构建统一 axios 实例
-export const ax = axios.create({
+export const api = axios.create({
     baseURL: "http://100.98.120.108:8080",
     timeout: 30000, // 30s等待时间(主要是因为有 ai)
     withCredentials: true // 允许携带 cookies（包括 sessionID）
 });
 
 // 请求拦截器
-ax.interceptors.request.use(
+api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token"); // 获取 token
 
@@ -24,7 +24,7 @@ ax.interceptors.request.use(
     }
 );
 
-ax.interceptors.response.use(
+api.interceptors.response.use(
     resp => {
         if (resp.data.code !== 0) {
             ElMessage.error(resp.data.msg)

@@ -76,7 +76,7 @@
     <div class="container-right">
       <div class="top-menu">
         <div class="col">用户名: {{ userinfo.username }}</div>
-        <div class="col">角色: {{ userinfo.auth }}</div>
+        <div class="col">角色: {{ getAuthName(userinfo.auth) }}</div>
         <div class="col" @click="logoutHandler">退出登录</div>
       </div>
 
@@ -91,6 +91,7 @@
 <script setup>
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 import router from "../infra/router.js";
+import {getAuthName} from "../infra/tools/authTools.js";
 
 const userinfo = useUserInfoStore()
 

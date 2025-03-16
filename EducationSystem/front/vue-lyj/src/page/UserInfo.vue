@@ -90,6 +90,7 @@ const roles = [
   { value: 0, label: "管理员" },
   { value: 1, label: "教师" },
   { value: 2, label: "学生" },
+  { value: 3, label: "家长" },
 ];
 const userTable = ref([
   {
