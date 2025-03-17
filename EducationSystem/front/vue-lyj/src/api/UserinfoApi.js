@@ -47,11 +47,11 @@ export const queryUserinfoApi = async (
  * 修改用户信息
  */
 export const updateUserinfoApi = async (
-    { oldpassword, password, email, phone, identity }
+    { oldpassword, password, email, phone }
 ) => {
     return await api.post(
         "/user/update",
-        { oldpassword, password, email, phone, identity }
+        { oldpassword, password, email, phone }
     )
 }
 

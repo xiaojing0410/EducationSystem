@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import {ElForm, ElFormItem, ElInput, ElButton, ElRow, ElCol, ElCard, ElMessage} from 'element-plus';
 import {loginApi, queryUserinfoApi} from "../api/UserinfoApi.js";
@@ -31,8 +31,8 @@ import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 const userinfo = useUserInfoStore()
 const router = useRouter(); // 用于路由跳转
 const loginTable = reactive({
-  userId: null,
-  password: null,
+  userId: "10001",
+  password: "123",
 });
 const loginHandler = async () => {
   const respToken = await loginApi({

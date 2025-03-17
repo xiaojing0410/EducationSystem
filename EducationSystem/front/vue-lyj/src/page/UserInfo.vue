@@ -3,23 +3,17 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-select class="ipt"  v-model="selectedRole" placeholder="请选择角色">
-          <el-option v-for="role in roles" :key="role.value" :label="role.label" :value="role.value"/>
-        </el-select>
-      </div>
-      <div class="row">
-        <el-input class="ipt" placeholder="请输入学生id" />
-        <el-input class="ipt" placeholder="请输入班级id" />
-        <el-input class="ipt" placeholder="请输入专业" />
-        <el-button class="btn" type="primary">查询</el-button>
-      </div>
-      <div class="row">
-        <el-input class="ipt" placeholder="请输入管理员id" />
-        <el-button class="btn" type="primary">查询</el-button>
-      </div>
-      <div class="row">
-        <el-input class="ipt" placeholder="请输入教师id" />
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth) || isParent(userinfo.auth)"
+                  v-model="queryUserInfoCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth)"
+            v-model="queryUserInfoCmd.class_id" class="ipt" placeholder="请输入班级id" />
+        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth)"
+            v-model="queryUserInfoCmd.teacher_id" class="ipt" placeholder="请输入教师id" />
+        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth)"
+            v-model="queryUserInfoCmd.major" class="ipt" placeholder="请输入专业" />
+        <el-input v-if="isAdmin(userinfo.auth)"
+                  v-model="queryUserInfoCmd.admin_id" class="ipt" placeholder="请输入管理员id" />
+        <el-button class="btn" type="primary" @click="queryUserinfoHandler">查询</el-button>
       </div>
     </div>
 
@@ -48,88 +42,66 @@
         <el-table-column prop="card_id" label="卡片号" />
         <el-table-column prop="dorm_id" label="宿舍号" />
         <el-table-column prop="create_time" label="创建时间" />
-<!--        <el-table-column label="操作">-->
-<!--          <template #default="{ row }">-->
-<!--            <el-button type="warning" @click="openUpdateUserInfoDialog(row)">编辑</el-button>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
       </el-table>
     </div>
 
-<!--    &lt;!&ndash; 编辑对话框 &ndash;&gt;-->
-<!--    <el-dialog v-model="updateUserInfoCmd.dialogVisible" title="编辑信息">-->
-<!--      <el-form label-width="80px">-->
-<!--        <el-form-item label="旧密码">-->
-<!--          <el-input v-model="updateUserInfoCmd.oldpassword" type="password" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="新密码">-->
-<!--          <el-input v-model="updateUserInfoCmd.password" type="password" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="邮箱">-->
-<!--          <el-input v-model="updateUserInfoCmd.email" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="手机号">-->
-<!--          <el-input v-model="updateUserInfoCmd.phone" />-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-<!--      <template #footer>-->
-<!--        <span>-->
-<!--          <el-button @click="updateUserInfoCmd.dialogVisible = false">取消</el-button>-->
-<!--          <el-button type="primary" @click="">保存</el-button>-->
-<!--        </span>-->
-<!--      </template>-->
-<!--   </el-dialog>-->
 
   </div>
 </template>
 
 <script setup>
 // 数据区
-const selectedRole = ref(0);
-const roles = [
-  { value: 0, label: "管理员" },
-  { value: 1, label: "教师" },
-  { value: 2, label: "学生" },
-  { value: 3, label: "家长" },
-];
+import {queryUserinfoApi} from "../api/UserinfoApi.js";
+import {isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+
+const userinfo = useUserInfoStore()
 const userTable = ref([
-  {
-    "user_id": 10003,
-    "username": "小静",
-    "gender": "女",
-    "email": "2234",
-    "phone": "1237",
-    "classInfo": {
-      "class_id": 1,
-      "college": "信息工程学院",
-      "major": "软件工程",
-      "grade": 1,
-      "year": 4
-    },
-    "current_state": -1,  //-2毕业 -1预报到 0就读 1表示休学中
-    "card_id": "610902200107128841",
-    "dorm_id": "10-207",
-    "student_array": null,
-    "create_time": "2025-03-02",
-  }
+  //   {
+  //   "user_id": 10003,
+  //   "username": "小静",
+  //   "gender": "女",
+  //   "email": "2234",
+  //   "phone": "1237",
+  //   "classInfo": {
+  //     "class_id": 1,
+  //     "college": "信息工程学院",
+  //     "major": "软件工程",
+  //     "grade": 1,
+  //     "year": 4
+  //   },
+  //   "current_state": -1,  //-2毕业 -1预报到 0就读 1表示休学中
+  //   "card_id": "610902200107128841",
+  //   "dorm_id": "10-207",
+  //   "student_array": null,
+  //   "create_time": "2025-03-02",
+  // }
 ])
 
+/**
+ * 查询用户列表
+ */
+const queryUserInfoCmd = ref({
+  class_id: null,
+  major: null,
+  student_id: null,
+  admin_id: null,
+  teacher_id: null
+})
+const queryUserinfoHandler = async () => {
+  const resp = await queryUserinfoApi({
+    class_id: queryUserInfoCmd.value.class_id,
+    major: queryUserInfoCmd.value.major,
+    student_id: queryUserInfoCmd.value.student_id,
+    admin_id: queryUserInfoCmd.value.admin_id,
+    teacher_id: queryUserInfoCmd.value.teacher_id
+  })
+  userTable.value = resp.data
+}
 
-// /**
-//  * 修改用户信息
-//  */
-// const updateUserInfoCmd = ref({
-//   dialogVisible: false,
-//   oldpassword: null,
-//   password: null,
-//   email: null,
-//   phone: null,
-// })
-// const openUpdateUserInfoDialog = (row) => {
-//   updateUserInfoCmd.value.email = row.email
-//   updateUserInfoCmd.value.phone = row.phone
-//   updateUserInfoCmd.value.dialogVisible = true;
-// };
+onMounted(async () => {
+  await queryUserinfoHandler()
+})
 
 </script>
 

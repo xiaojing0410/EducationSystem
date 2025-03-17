@@ -8,3 +8,8 @@ export const getAuthName = (auth) => {
     };
     return authMap[auth] || "未知";
 }
+
+export const isAdmin = (auth) => auth === 0;
+export const isTeacher = (auth) => auth === 1;
+export const isStudent = (auth) => auth === 2;
+export const isParent = (auth) => auth === 3;

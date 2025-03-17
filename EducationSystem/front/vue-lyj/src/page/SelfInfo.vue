@@ -65,7 +65,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="确认密码">
+            <el-form-item label="旧密码">
               <el-input type="password" v-model="userTable.oldpassword"></el-input>
             </el-form-item>
           </el-col>
@@ -94,7 +94,7 @@
 
         <el-row>
           <el-col :span="24">
-            <el-button type="primary" @click="saveChanges">保存修改</el-button>
+            <el-button type="primary" @click="updateUserinfoHandler">保存修改</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -104,12 +104,14 @@
 
 <script setup>
 
-import {queryUserinfoApi} from "../api/UserinfoApi.js";
+import {queryUserinfoApi, updateUserinfoApi} from "../api/UserinfoApi.js";
+import {ElMessage} from "element-plus";
 
 const userTable = ref({
   user_id: 10003,
   username: "小静",
   password: null,
+  oldpassword: null,
   gender: "女",
   email: null,
   phone: null,
@@ -145,6 +147,20 @@ const querySelfInfoHandler = async () => {
   userTable.value.dorm_id = user.dorm_id
   userTable.value.student_array = user.student_array
 }
+
+/**
+ * 修改用户信息
+ */
+const updateUserinfoHandler = async () => {
+  await updateUserinfoApi({
+    oldpassword: userTable.value.oldpassword,
+    password: userTable.value.password,
+    email: userTable.value.email,
+    phone: userTable.value.phone,
+  })
+}
+
+
 onMounted(async () => {
   await querySelfInfoHandler()
 })
