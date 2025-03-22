@@ -6,7 +6,7 @@
         <el-input class="ipt" v-model="queryCoursePlanCmd.class_id" placeholder="请输入班级id" />
         <el-input class="ipt" v-model="queryCoursePlanCmd.semester" placeholder="请输入学期" />
         <el-input class="ipt" v-model="queryCoursePlanCmd.student_id" placeholder="请输入学生id" />
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-button @click="queryCoursePlanHandler" class="btn" type="primary">查询</el-button>
         <el-button class="btn" type="warning" @click="addCoursePlanCmd.dialogVisible = true">新增课程安排</el-button>
       </div>
     </div>
@@ -69,7 +69,7 @@
 
       <span slot="footer" class="dialog-footer">
       <el-button @click="addCoursePlanCmd.dialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="">保存</el-button>
+      <el-button type="primary" @click="addCoursePlanHandler">保存</el-button>
     </span>
     </el-dialog>
 
@@ -78,30 +78,33 @@
 
 <script setup>
 // 数据区
+import {addCoursePlanApi, queryCoursePlanApi} from "../api/CoursePlanApi.js";
+import {ElMessage} from "element-plus";
+
 const coursePlanTable = ref([
-  {
-    course_id: 1,
-    semester: 20251,
-    time: "每周一、三上午10:00",
-    loc: "B001",
-    courseCode: {
-      course_code_id: 1,
-      course_name: "数学",
-      type: "必修",
-      credit: 5
-    },
-    teacherInfoVo: {
-      teacher_id: 2000,
-      username: "小熊"
-    },
-    classInfo: {
-      class_id: 1,
-      college: "信息工程学院",
-      major: "软件工程",
-      grade: 1,
-      year: 4
-    }
-  },
+  // {
+  //   course_id: 1,
+  //   semester: 20251,
+  //   time: "每周一、三上午10:00",
+  //   loc: "B001",
+  //   courseCode: {
+  //     course_code_id: 1,
+  //     course_name: "数学",
+  //     type: "必修",
+  //     credit: 5
+  //   },
+  //   teacherInfoVo: {
+  //     teacher_id: 2000,
+  //     username: "小熊"
+  //   },
+  //   classInfo: {
+  //     class_id: 1,
+  //     college: "信息工程学院",
+  //     major: "软件工程",
+  //     grade: 1,
+  //     year: 4
+  //   }
+  // },
 ])
 
 /**
@@ -112,8 +115,9 @@ const queryCoursePlanCmd = ref({
   semester: null,
   student_id: null,
 })
-const queryCoursePlanHandler = () => {
-
+const queryCoursePlanHandler = async () => {
+  const resp = await queryCoursePlanApi(toRaw(queryCoursePlanCmd.value))
+  coursePlanTable.value = resp.data
 }
 
 /**
@@ -121,16 +125,22 @@ const queryCoursePlanHandler = () => {
  */
 const addCoursePlanCmd = ref({
   dialogVisible: false,
-  course_code_id: 1,
-  semester: 20251,
-  teacher_id: 2001,
-  class_id: 1,
-  time: "每周三、五第三、四节课",
-  loc: "S106"
+  course_code_id: null,
+  semester: null,
+  teacher_id: null,
+  class_id: null,
+  time: null,
+  loc: null
 })
-const addCourseHandler = async () => {
-
+const addCoursePlanHandler = async () => {
+  await addCoursePlanApi(toRaw(addCoursePlanCmd.value))
+  ElMessage.success("添加成功")
 }
+
+onMounted(async () => {
+  await queryCoursePlanHandler()
+})
+
 
 </script>
 

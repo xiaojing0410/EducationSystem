@@ -128,6 +128,10 @@ const addStudentToClassHandler = async () => {
   ElMessage.success("添加成功")
 }
 
+onMounted(async () => {
+  await queryClassInfoHandler()
+})
+
 </script>
 
 <style lang="scss" scoped>

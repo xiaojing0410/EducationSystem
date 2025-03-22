@@ -1,12 +1,13 @@
 
 export const getAuthName = (auth) => {
+    const a = Number(auth)
     const authMap = {
         0: "管理员",
         1: "教师",
         2: "学生",
         3: "家长"
     };
-    return authMap[auth] || "未知";
+    return authMap[a] || "未知";
 }
 
 export const isAdmin = (auth) => auth === 0;

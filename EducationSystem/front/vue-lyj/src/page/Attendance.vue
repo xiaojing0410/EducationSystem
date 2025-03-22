@@ -43,7 +43,7 @@
         <el-table-column label="出勤总数" prop="course.at_total"></el-table-column>
         <el-table-column label="操作">
           <template #default="{ row }">
-            <el-button type="success" plain @click="removeCourseHandler(row.attendance.attendance_id)">
+            <el-button type="success" plain @click="updateAttendanceHandler(row.attendance.attendance_id)">
               确认出勤
             </el-button>
           </template>
@@ -68,40 +68,43 @@
 
 <script setup>
 // 数据区
+import {addAttendanceApi, queryAttendanceApi, updateAttendanceApi} from "../api/AttendanceApi.js";
+import {ElMessage} from "element-plus";
+
 const courseTable = ref([
-  {
-    attendance: {
-      attendance_id: 2,
-      course_id: 1,
-      student_id: 10000,
-      at_count: 1
-    },
-    courseCode: {
-      course_code_id: 1,
-      course_name: "数学",
-      type: null,
-      credit: null
-    },
-    student_id: 10000,
-    username: "龙洋静",
-    classInfo: {
-      class_id: 1,
-      college: "信息工程学院",
-      major: "软件工程",
-      grade: 1,
-      year: 4
-    },
-    course: {
-      course_id: 1,
-      course_code_id: 1,
-      semester: 20251,
-      teacher_id: 2000,
-      class_id: 1,
-      time: null,
-      loc: null,
-      at_total: null
-    }
-  }
+  // {
+  //   attendance: {
+  //     attendance_id: 2,
+  //     course_id: 1,
+  //     student_id: 10000,
+  //     at_count: 1
+  //   },
+  //   courseCode: {
+  //     course_code_id: 1,
+  //     course_name: "数学",
+  //     type: null,
+  //     credit: null
+  //   },
+  //   student_id: 10000,
+  //   username: "龙洋静",
+  //   classInfo: {
+  //     class_id: 1,
+  //     college: "信息工程学院",
+  //     major: "软件工程",
+  //     grade: 1,
+  //     year: 4
+  //   },
+  //   course: {
+  //     course_id: 1,
+  //     course_code_id: 1,
+  //     semester: 20251,
+  //     teacher_id: 2000,
+  //     class_id: 1,
+  //     time: null,
+  //     loc: null,
+  //     at_total: null
+  //   }
+  // }
 ])
 
 /**
@@ -109,24 +112,37 @@ const courseTable = ref([
  */
 const queryAttendanceCmd = ref({
   semester: null,
-  course_id: null,
+  course_id: 1, // 默认传 1...
   student_id: null,
 })
 const queryAttendanceHandler = async () => {
-
+  const resp = queryAttendanceApi(toRaw(queryAttendanceCmd.value))
+  courseTable.value = resp.data
 }
 
 /**
- * 开始考勤(和查询考情走同一个 api，此处只传递 course_id)
+ * 开始考勤
  */
 const startAttendanceCmd = ref({
   dialogVisible: false,
   course_id: null,
 })
 const startAttendanceHandler = async () => {
-
+  const resp = await addAttendanceApi(toRaw(startAttendanceCmd.value))
+  ElMessage.success("添加考勤成功")
 }
 
+/**
+ * 确认出勤
+ */
+const updateAttendanceHandler = async (id) => {
+  const resp = await updateAttendanceApi({ attendance_id: id })
+  ElMessage.success("确认成功")
+}
+
+onMounted(async () => {
+  await queryAttendanceHandler()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -31,7 +31,7 @@ import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 const userinfo = useUserInfoStore()
 const router = useRouter(); // 用于路由跳转
 const loginTable = reactive({
-  userId: "10001",
+  userId: "2",
   password: "123",
 });
 const loginHandler = async () => {

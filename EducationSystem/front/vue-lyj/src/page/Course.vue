@@ -92,6 +92,10 @@ const addCourseHandler = async () => {
   ElMessage.success("添加成功")
 }
 
+onMounted(async () => {
+  await queryCourseHandler()
+})
+
 </script>
 
 <style lang="scss" scoped>
