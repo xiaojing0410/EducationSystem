@@ -7,7 +7,7 @@
         <el-input class="ipt" v-model="queryAttendanceCmd.semester" placeholder="请输入学期" />
         <el-input class="ipt" v-model="queryAttendanceCmd.student_id" placeholder="请输入学生id" />
 
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-button @click="queryAttendanceHandler" class="btn" type="primary">查询</el-button>
         <el-button style="width: 300px" class="btn" type="warning" @click="startAttendanceCmd.dialogVisible = true">开始考勤</el-button>
       </div>
     </div>
@@ -51,7 +51,7 @@
       </el-table>
     </div>
 
-    <el-dialog v-model="startAttendanceCmd.dialogVisible" title="新增课程" width="500px">
+    <el-dialog v-model="startAttendanceCmd.dialogVisible" title="开始考勤" width="500px">
       <el-form :model="startAttendanceCmd" label-width="100px">
         <el-form-item label="课程名称">
           <el-input v-model="startAttendanceCmd.course_id" placeholder="请输入课程id" />
@@ -112,7 +112,7 @@ const courseTable = ref([
  */
 const queryAttendanceCmd = ref({
   semester: null,
-  course_id: 1, // 默认传 1...
+  course_id: null,
   student_id: null,
 })
 const queryAttendanceHandler = async () => {
@@ -140,9 +140,9 @@ const updateAttendanceHandler = async (id) => {
   ElMessage.success("确认成功")
 }
 
-onMounted(async () => {
-  await queryAttendanceHandler()
-})
+/**
+ * 考勤由于后端没有做查询兼容，因此页面初始化不进行查询
+ */
 </script>
 
 <style lang="scss" scoped>
