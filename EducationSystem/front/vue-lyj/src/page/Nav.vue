@@ -65,6 +65,12 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'StudyWarn'}">
+        <el-menu-item index="8.1">
+          <span>学业预警</span>
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'SelfInfo'}">
         <el-menu-item index="9">
           <span>个人信息</span>

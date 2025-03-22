@@ -65,6 +65,11 @@ const router = createRouter({
             name: 'Grades',
             path: '/grades',
             component: () => import('../page/Grades.vue')
+        },
+        {
+            name: 'StudyWarn',
+            path: '/study_warn',
+            component: () => import('../page/StudyWarn.vue')
         }
     ],
     history: createWebHistory()
