@@ -4,7 +4,7 @@
     <div class="actions" >
       <div class="row">
         <el-input class="ipt" placeholder="请输入班级信息" />
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-button @click="queryClassInfoHandler" class="btn" type="primary">查询</el-button>
         <el-button class="btn" type="warning" @click="addClassCmd.dialogVisible = true">新增班级</el-button>
       </div>
     </div>
@@ -66,15 +66,26 @@
 
 <script setup>
 // 数据区
+import {addClassInfoApi, queryClassInfoApi, updateClassInfoApi} from "../api/ClassApi.js";
+import {ElMessage} from "element-plus";
+
 const classTable = ref([
-  {
-    class_id: 1,
-    college: "信息工程学院",
-    major: "软件工程",
-    grade: 1,
-    year: 4
-  }
+  // {
+  //   class_id: 1,
+  //   college: "信息工程学院",
+  //   major: "软件工程",
+  //   grade: 1,
+  //   year: 4
+  // }
 ])
+
+/**
+ * 查询班级信息
+ */
+const queryClassInfoHandler = async () => {
+  const resp = await queryClassInfoApi()
+  classTable.value = resp.data
+}
 
 /**
  * 添加班级
@@ -87,7 +98,14 @@ const addClassCmd = ref({
   year: null
 })
 const addClassHandler = async () => {
-
+  const resp = await addClassInfoApi({
+    college: addClassCmd.value.college,
+    major: addClassCmd.value.major,
+    grade: addClassCmd.value.grade,
+    year: addClassCmd.value.year
+  })
+  await queryClassInfoHandler()
+  ElMessage.success("班级添加成功")
 }
 
 /**
@@ -103,7 +121,11 @@ const openAddStudentToClassHandler = (row) => {
   addStudentToClassCmd.value.class_id = row.class_id
 }
 const addStudentToClassHandler = async () => {
-
+  const resp = await updateClassInfoApi({
+    student_ids: addStudentToClassCmd.value.student_ids,
+    class_id: addStudentToClassCmd.value.class_id
+  })
+  ElMessage.success("添加成功")
 }
 
 </script>
