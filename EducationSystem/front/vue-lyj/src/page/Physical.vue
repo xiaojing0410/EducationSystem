@@ -3,14 +3,10 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" placeholder="学号" />
-        <el-button class="btn" type="primary">查询</el-button>
-      </div>
-
-      <div class="row">
-        <el-input class="ipt" placeholder="班级id" />
-        <el-input class="ipt" placeholder="学年" />
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-input v-model="queryPhysicalCmd.student_id" class="ipt" placeholder="学号" />
+        <el-input v-model="queryPhysicalCmd.class_id" class="ipt" placeholder="班级id" />
+        <el-input v-model="queryPhysicalCmd.year" class="ipt" placeholder="学年" />
+        <el-button @click="queryPhysicalHandler" class="btn" type="primary">查询</el-button>
       </div>
     </div>
 
@@ -91,31 +87,48 @@
 
 <script setup>
 // 数据区
+import {queryPhysicalApi} from "../api/PhysicalApi.js";
+import {ElMessage} from "element-plus";
+
 const physicalTable = ref([
-  {
-    student_id: 10000,
-    username: "龙洋静",
-    physical: {
-      physical_id: 1,
-      student_id: 10000,
-      year: 1,
-      state: 1, // 0表示未测试，1表示已测试
-      sprint: 9.8,
-      run: 3.55,
-      sit_up: 38,
-      jump: 186,
-      height: 150,
-      weight: 40
-    },
-    classInfo: {
-      class_id: 1,
-      college: "信息工程学院",
-      major: "软件工程",
-      grade: 1,
-      year: 4
-    }
-  }
+  // {
+  //   student_id: 10000,
+  //   username: "龙洋静",
+  //   physical: {
+  //     physical_id: 1,
+  //     student_id: 10000,
+  //     year: 1,
+  //     state: 1, // 0表示未测试，1表示已测试
+  //     sprint: 9.8,
+  //     run: 3.55,
+  //     sit_up: 38,
+  //     jump: 186,
+  //     height: 150,
+  //     weight: 40
+  //   },
+  //   classInfo: {
+  //     class_id: 1,
+  //     college: "信息工程学院",
+  //     major: "软件工程",
+  //     grade: 1,
+  //     year: 4
+  //   }
+  // }
 ])
+
+/**
+ * 查询体测成绩
+ */
+const queryPhysicalCmd = ref({
+  student_id: null,
+  class_id: null,
+  year: null,
+})
+const queryPhysicalHandler = async () => {
+  const resp = await queryPhysicalApi(toRaw(queryPhysicalCmd.value))
+  physicalTable.value = resp.data
+}
+
 
 const updatePhysicalCmd = ref({
   isShow: false,
@@ -138,6 +151,10 @@ const openUpdatePhysicalDialog = (row) => {
     height: row.physical.height,
     weight: row.physical.weight,
   }
+}
+const updatePhysicalHandler = async () => {
+  await updatePhysicalHandler(toRaw(updatePhysicalCmd.value))
+  ElMessage.success("修改成功")
 }
 
 </script>
