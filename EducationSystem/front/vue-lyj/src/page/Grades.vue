@@ -6,7 +6,7 @@
         <el-input class="ipt" v-model="queryGradesCmd.class_id" placeholder="请输入班级id" />
         <el-input class="ipt" v-model="queryGradesCmd.semester" placeholder="请输入学期" />
         <el-input class="ipt" v-model="queryGradesCmd.student_id" placeholder="请输入学生id" />
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-button @click="queryGradesHandler" class="btn" type="primary">查询</el-button>
       </div>
       <div class="row">
         <el-button type="success" style="width: 200px">生成ai个性化推荐</el-button>
@@ -69,30 +69,33 @@
 
 <script setup>
 // 数据区
+import {queryGradesApi, updateGradesApi} from "../api/Grades.js";
+import {ElMessage} from "element-plus";
+
 const gradesTable = ref([
-  {
-    user: {
-      id: 10001,
-      username: "小静",
-      teacher_id: 10001
-    },
-    grades: {
-      grades_id: 1,
-      student_id: 10001,
-      course_id: 1,
-      score: 89.0,
-      state: 1,
-      pass: 1,
-      gpa: 3.9
-    },
-    classInfo: {
-      class_id: 1,
-      college: "信息工程学院",
-      major: "软件工程",
-      grade: 1,
-      year: 4
-    }
-  }
+  // {
+  //   user: {
+  //     id: 10001,
+  //     username: "小静",
+  //     teacher_id: 10001
+  //   },
+  //   grades: {
+  //     grades_id: 1,
+  //     student_id: 10001,
+  //     course_id: 1,
+  //     score: 89.0,
+  //     state: 1,
+  //     pass: 1,
+  //     gpa: 3.9
+  //   },
+  //   classInfo: {
+  //     class_id: 1,
+  //     college: "信息工程学院",
+  //     major: "软件工程",
+  //     grade: 1,
+  //     year: 4
+  //   }
+  // }
 ])
 
 /**
@@ -104,17 +107,17 @@ const queryGradesCmd = ref({
   student_id: null,
 })
 const queryGradesHandler = async () => {
-
+  const resp = await queryGradesApi(toRaw(queryGradesCmd.value))
+  gradesTable.value = resp.data
 }
-
 
 /**
  * 编辑成绩
  */
 const updateGradesCmd = ref({
   dialogVisible: false,
-  grades_id: 1,
-  score: 60
+  grades_id: null,
+  score: null
 })
 const openUpdateGradesHandler = (row) => {
   updateGradesCmd.value.dialogVisible = true
@@ -122,8 +125,16 @@ const openUpdateGradesHandler = (row) => {
   updateGradesCmd.value.grades_id = row.grades.score
 }
 const updateGradesHandle = async () => {
-
+  const resp = await updateGradesApi(toRaw(updateGradesCmd.value))
+  ElMessage.success("成绩修改成功")
 }
+
+/**
+ * 只能通过点击按钮查询
+ */
+// onMounted(async () => {
+//   await queryGradesHandler()
+// })
 
 </script>
 
