@@ -3,9 +3,9 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" placeholder="请输入学生id" />
-        <el-input class="ipt" placeholder="请输入班级id" />
-        <el-button class="btn" type="primary">查询</el-button>
+        <el-input v-model="queryHonorCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-input v-model="queryHonorCmd.class_id" class="ipt" placeholder="请输入班级id" />
+        <el-button @click="queryHonorHandler" class="btn" type="primary">查询</el-button>
         <el-button class="btn" type="warning" @click="applyHonorCmd.dialogVisible = true">申请荣誉</el-button>
       </div>
     </div>
@@ -93,27 +93,42 @@
 
 <script setup>
 // 数据区
+import {applyHonorApi, delHonorApi, queryHonorApi, updateHonorApi} from "../api/HonorApi.js";
+import {ElMessage} from "element-plus";
+
 const honorTable = ref([
-  {
-    "student_id": 10000,
-    "username": "龙洋静",
-    "honor": {
-      "honor_id": 1,
-      "student_id": 10000,
-      "honor_name": "校级奖学金一等奖",
-      "award_date": "2025-03-12",
-      "type": 1,
-      "state": -1
-    },
-    "classInfo": {
-      "class_id": 1,
-      "college": "信息工程学院",
-      "major": "软件工程",
-      "grade": 1,
-      "year": 4
-    }
-  },
+  // {
+  //   "student_id": 10000,
+  //   "username": "龙洋静",
+  //   "honor": {
+  //     "honor_id": 1,
+  //     "student_id": 10000,
+  //     "honor_name": "校级奖学金一等奖",
+  //     "award_date": "2025-03-12",
+  //     "type": 1,
+  //     "state": -1
+  //   },
+  //   "classInfo": {
+  //     "class_id": 1,
+  //     "college": "信息工程学院",
+  //     "major": "软件工程",
+  //     "grade": 1,
+  //     "year": 4
+  //   }
+  // },
 ])
+
+/**
+ * 查询荣誉
+ */
+const queryHonorCmd = ref({
+  student_id: null,
+  class_id: null,
+})
+const queryHonorHandler = async () => {
+  const resp = await queryHonorApi(toRaw(queryHonorCmd.value))
+  honorTable.value = resp.data
+}
 
 /**
  * 申请荣誉
@@ -124,24 +139,33 @@ const applyHonorCmd = ref({
   type: null,
 })
 const applyHonorHandler = async () => {
-
+  const resp = await applyHonorApi(toRaw(applyHonorCmd.value))
+  ElMessage.success("申请成功，请等待耐心审核~")
 }
 
 /**
- * 荣誉审核
+ * 荣誉审核(实际上就是修改审核的 state)
  * @param state 1通过 -1不通过
  */
 const reviewHonorHandler = async (honor_id, state) => {
-
+  await updateHonorApi({
+    honor_id: honor_id,
+    state: state
+  })
+  ElMessage.success("操作成功")
 }
 
 /**
  * 删除荣誉
  */
 const removeHonorHandler = async (honor_id) => {
-
+  await delHonorApi({honor_id: honor_id})
+  ElMessage.success("删除成功")
 }
 
+onMounted(async () => {
+  await queryHonorHandler()
+})
 
 </script>
 
