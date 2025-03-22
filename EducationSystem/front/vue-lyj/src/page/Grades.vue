@@ -9,7 +9,8 @@
         <el-button @click="queryGradesHandler" class="btn" type="primary">查询</el-button>
       </div>
       <div class="row">
-        <el-button type="success" style="width: 200px">生成ai个性化推荐</el-button</div>
+        <el-button type="success" style="width: 200px">生成ai个性化推荐</el-button>
+      </div>
     </div>
 
     <!-- 数据区 -->
