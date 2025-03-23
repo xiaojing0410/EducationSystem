@@ -8,9 +8,6 @@
         <el-input class="ipt" v-model="queryGradesCmd.student_id" placeholder="请输入学生id" />
         <el-button @click="queryGradesHandler" class="btn" type="primary">查询</el-button>
       </div>
-      <div class="row">
-        <el-button type="success" style="width: 200px">生成ai个性化推荐</el-button>
-      </div>
     </div>
 
     <!-- 数据区 -->
@@ -68,9 +65,11 @@
 
 <script setup>
 // 数据区
-import {queryGradesApi, updateGradesApi} from "../api/Grades.js";
+import {queryGradesApi, updateGradesApi} from "../api/GradesApi.js";
 import {ElMessage} from "element-plus";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
+const userinfo = useUserInfoStore()
 const gradesTable = ref([
   // {
   //   user: {

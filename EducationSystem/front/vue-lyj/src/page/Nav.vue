@@ -77,6 +77,12 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'Recommend'}">
+        <el-menu-item index="8.a">
+          <span>生成个性化推荐</span>
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'SelfInfo'}">
         <el-menu-item index="9">
           <span>个人信息</span>
@@ -119,7 +125,7 @@ const logoutHandler = () => {
 <style lang="scss" scoped>
 #nav {
   width: 100%;
-  height: 750px;
+  height: 800px;
   display: flex;
 }
 #nav .logo {
