@@ -162,9 +162,6 @@ const queryRelearnCmd = ref({
 })
 const queryRelearnHandler = async () => {
   const resp = await queryRelearnApi(toRaw(queryRelearnCmd.value))
-  if (resp.data.length === 0) {
-    ElMessage.info("查询无结果")
-  }
   relearnTable.value = resp.data
 }
 

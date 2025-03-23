@@ -119,7 +119,7 @@ const logoutHandler = () => {
 <style lang="scss" scoped>
 #nav {
   width: 100%;
-  height: 100%;
+  height: 750px;
   display: flex;
 }
 #nav .logo {
