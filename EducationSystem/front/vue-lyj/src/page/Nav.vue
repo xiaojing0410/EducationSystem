@@ -65,6 +65,12 @@
         </el-menu-item>
       </router-link>
 
+      <router-link :to="{name: 'Relearn'}">
+        <el-menu-item index="8.2">
+          <span>重修记录</span>
+        </el-menu-item>
+      </router-link>
+
       <router-link :to="{name: 'StudyWarn'}">
         <el-menu-item index="8.1">
           <span>学业预警</span>
