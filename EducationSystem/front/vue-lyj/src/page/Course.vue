@@ -89,6 +89,8 @@ const addCourseHandler = async () => {
     type: addCourseCmd.value.type,
     credit: addCourseCmd.value.credit
   })
+  addCourseCmd.value.dialogVisible = false
+  await queryCourseHandler()
   ElMessage.success("添加成功")
 }
 

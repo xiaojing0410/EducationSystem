@@ -17,7 +17,7 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Class'}">
+      <router-link :to="{name: 'Class'}" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
         <el-menu-item index="1.1">
           <span>班级管理</span>
         </el-menu-item>
@@ -29,7 +29,7 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Course'}">
+      <router-link :to="{name: 'Course'}" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
         <el-menu-item index="3">
           <span>课程管理</span>
         </el-menu-item>
@@ -109,7 +109,7 @@
 <script setup>
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 import router from "../infra/router.js";
-import {getAuthName} from "../infra/tools/authTools.js";
+import {getAuthName, isAdmin, isTeacher} from "../infra/tools/authTools.js";
 
 const userinfo = useUserInfoStore()
 

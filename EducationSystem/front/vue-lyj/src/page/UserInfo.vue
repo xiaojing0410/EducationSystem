@@ -3,17 +3,22 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth) || isParent(userinfo.auth)"
-                  v-model="queryUserInfoCmd.student_id" class="ipt" placeholder="请输入学生id" />
-        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth)"
-            v-model="queryUserInfoCmd.class_id" class="ipt" placeholder="请输入班级id" />
-        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth)"
-            v-model="queryUserInfoCmd.teacher_id" class="ipt" placeholder="请输入教师id" />
-        <el-input v-if="isAdmin(userinfo.auth) || isTeacher(userinfo.auth)"
-            v-model="queryUserInfoCmd.major" class="ipt" placeholder="请输入专业" />
-        <el-input v-if="isAdmin(userinfo.auth)"
+        <el-input v-if="isAdmin(auth)" clearable
                   v-model="queryUserInfoCmd.admin_id" class="ipt" placeholder="请输入管理员id" />
+        <el-input v-if="isAdmin(auth) || isTeacher(auth)" clearable
+                  v-model="queryUserInfoCmd.teacher_id" class="ipt" placeholder="请输入教师id" />
+        <el-input v-if="isAdmin(auth) || isTeacher(auth) || isParent(auth)" clearable
+                  v-model="queryUserInfoCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-input v-if="isAdmin(auth) || isTeacher(auth)" clearable
+            v-model="queryUserInfoCmd.class_id" class="ipt" placeholder="请输入班级id" />
+        <el-input v-if="isAdmin(auth) || isTeacher(auth)" clearable
+            v-model="queryUserInfoCmd.major" class="ipt" placeholder="请输入专业" />
         <el-button class="btn" type="primary" @click="queryUserinfoHandler">查询</el-button>
+      </div>
+      <div class="row">
+        <el-button v-if="isAdmin(auth)" @click="queryTypeAllUserinfoHandler(0)">查询所有管理员</el-button>
+        <el-button v-if="isAdmin(auth) || isTeacher(auth)" @click="queryTypeAllUserinfoHandler(1)">查询所有老师</el-button>
+        <el-button v-if="isAdmin(auth) || isTeacher(auth)" @click="queryTypeAllUserinfoHandler(2)">查询所有学生</el-button>
       </div>
     </div>
 
@@ -54,8 +59,10 @@
 import {queryUserinfoApi} from "../api/UserinfoApi.js";
 import {isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {ElMessage} from "element-plus";
 
 const userinfo = useUserInfoStore()
+const auth = userinfo.getAuth()
 const userTable = ref([
   //   {
   //   "user_id": 10003,
@@ -88,6 +95,33 @@ const queryUserInfoCmd = ref({
   admin_id: null,
   teacher_id: null
 })
+const resetQueryUserInfoCmd = async () => {
+  queryUserInfoCmd.value = {
+    class_id: null,
+    major: null,
+    student_id: null,
+    admin_id: null,
+    teacher_id: null
+  }
+}
+const queryTypeAllUserinfoHandler = async (type) => {
+  if (type === 0) {
+    queryUserInfoCmd.value.admin_id = 0
+  } else if (type === 1) {
+    queryUserInfoCmd.value.teacher_id = 0
+  } else if (type === 2) {
+    queryUserInfoCmd.value.student_id = 0
+  } else {
+    ElMessage.error("非法参数")
+    return
+  }
+  try {
+    const resp = await queryUserinfoHandler()
+    userTable.value = resp.data
+  } finally {
+    await resetQueryUserInfoCmd()
+  }
+}
 const queryUserinfoHandler = async () => {
   const resp = await queryUserinfoApi({
     class_id: queryUserInfoCmd.value.class_id,

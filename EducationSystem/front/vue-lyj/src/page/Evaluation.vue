@@ -71,7 +71,10 @@
 import { ref } from 'vue';
 import {ElLoading, ElMessage} from 'element-plus';
 import {addEvaluationApi, aiFeedbackApi, queryEvaluationApi} from "../api/EvaluationApi.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {isStudent} from "../infra/tools/authTools.js";
 
+const userinfo = useUserInfoStore()
 const mainTable = ref({
   user: {
     id: null,
@@ -170,7 +173,11 @@ const addEvaluationHandler = async () => {
 }
 
 onMounted(async () => {
-
+  // 如果是学生，就直接查询自己的
+  if (isStudent(userinfo.auth)) {
+    queryEvaluationCmd.value.student_id = userinfo.id
+    await queryEvaluationHandler()
+  }
 })
 </script>
 

@@ -3,21 +3,22 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" v-model="queryCoursePlanCmd.class_id" placeholder="请输入班级id" />
         <el-input class="ipt" v-model="queryCoursePlanCmd.semester" placeholder="请输入学期" />
-        <el-input class="ipt" v-model="queryCoursePlanCmd.student_id" placeholder="请输入学生id" />
+        <el-input v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="ipt" v-model="queryCoursePlanCmd.class_id" placeholder="请输入班级id" />
+        <el-input v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="ipt" v-model="queryCoursePlanCmd.student_id" placeholder="请输入学生id" />
         <el-button @click="queryCoursePlanHandler" class="btn" type="primary">查询</el-button>
-        <el-button class="btn" type="warning" @click="addCoursePlanCmd.dialogVisible = true">新增课程安排</el-button>
+        <el-button v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="btn" type="warning" @click="addCoursePlanCmd.dialogVisible = true">新增课程安排</el-button>
       </div>
     </div>
 
     <!-- 数据区 -->
     <div class="data">
       <el-table :data="coursePlanTable" style="width: 100%">
-        <el-table-column label="课程 ID" prop="course_id" />
+        <el-table-column label="课程安排 ID" prop="course_id" />
         <el-table-column label="学期" prop="semester" />
         <el-table-column label="上课时间" prop="time" />
         <el-table-column label="上课地点" prop="loc" />
+        <el-table-column label="课程id" prop="courseCode.course_code_id" />
         <el-table-column label="课程名称" :prop="'courseCode.course_name'" />
         <el-table-column label="课程类型" :prop="'courseCode.type'" />
         <el-table-column label="学分" :prop="'courseCode.credit'" />
@@ -42,8 +43,8 @@
         width="50%"
     >
       <el-form :model="addCoursePlanCmd" label-width="120px">
-        <el-form-item label="课程代码">
-          <el-input v-model="addCoursePlanCmd.course_code_id" disabled></el-input>
+        <el-form-item label="课程id">
+          <el-input v-model="addCoursePlanCmd.course_code_id"></el-input>
         </el-form-item>
 
         <el-form-item label="学期">
@@ -80,7 +81,10 @@
 // 数据区
 import {addCoursePlanApi, queryCoursePlanApi} from "../api/CoursePlanApi.js";
 import {ElMessage} from "element-plus";
+import {isAdmin, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
+const userinfo = useUserInfoStore()
 const coursePlanTable = ref([
   // {
   //   course_id: 1,
@@ -134,6 +138,8 @@ const addCoursePlanCmd = ref({
 })
 const addCoursePlanHandler = async () => {
   await addCoursePlanApi(toRaw(addCoursePlanCmd.value))
+  addCoursePlanCmd.value.dialogVisible = false
+  await queryCoursePlanHandler()
   ElMessage.success("添加成功")
 }
 

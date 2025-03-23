@@ -3,8 +3,8 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" placeholder="请输入班级信息" />
-        <el-button @click="queryClassInfoHandler" class="btn" type="primary">查询</el-button>
+<!--        <el-input v-model="" class="ipt" placeholder="请输入班级信息" />-->
+<!--        <el-button @click="queryClassInfoHandler" class="btn" type="primary">查询</el-button>-->
         <el-button class="btn" type="warning" @click="addClassCmd.dialogVisible = true">新增班级</el-button>
       </div>
     </div>
@@ -79,9 +79,6 @@ const classTable = ref([
   // }
 ])
 
-/**
- * 查询班级信息
- */
 const queryClassInfoHandler = async () => {
   const resp = await queryClassInfoApi()
   classTable.value = resp.data
@@ -104,6 +101,7 @@ const addClassHandler = async () => {
     grade: addClassCmd.value.grade,
     year: addClassCmd.value.year
   })
+  addClassCmd.value.dialogVisible = false
   await queryClassInfoHandler()
   ElMessage.success("班级添加成功")
 }
@@ -125,6 +123,7 @@ const addStudentToClassHandler = async () => {
     student_ids: addStudentToClassCmd.value.student_ids,
     class_id: addStudentToClassCmd.value.class_id
   })
+  addStudentToClassCmd.value.isShow = false
   ElMessage.success("添加成功")
 }
 

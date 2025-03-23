@@ -3,10 +3,10 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryHonorCmd.student_id" class="ipt" placeholder="请输入学生id" />
-        <el-input v-model="queryHonorCmd.class_id" class="ipt" placeholder="请输入班级id" />
-        <el-button @click="queryHonorHandler" class="btn" type="primary">查询</el-button>
-        <el-button class="btn" type="warning" @click="applyHonorCmd.dialogVisible = true">申请荣誉</el-button>
+        <el-input v-if="!isStudent(userinfo.getAuth())" v-model="queryHonorCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-input v-if="!isStudent(userinfo.getAuth())" v-model="queryHonorCmd.class_id" class="ipt" placeholder="请输入班级id" />
+        <el-button v-if="!isStudent(userinfo.getAuth())" @click="queryHonorHandler" class="btn" type="primary">查询</el-button>
+        <el-button v-if="isStudent(userinfo.getAuth())" class="btn" type="warning" @click="applyHonorCmd.dialogVisible = true">申请荣誉</el-button>
       </div>
     </div>
 
@@ -42,6 +42,7 @@
           <template #default="{ row }">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
               <el-button
+                  v-if="!isStudent(userinfo.getAuth())"
                   type="success"
                   plain
                   @click="reviewHonorHandler(row.honor.honor_id, 1)"
@@ -49,6 +50,7 @@
                 通过
               </el-button>
               <el-button
+                  v-if="!isStudent(userinfo.getAuth())"
                   type="warning"
                   plain
                   @click="reviewHonorHandler(row.honor.honor_id, -1)"
@@ -95,7 +97,10 @@
 // 数据区
 import {applyHonorApi, delHonorApi, queryHonorApi, updateHonorApi} from "../api/HonorApi.js";
 import {ElMessage} from "element-plus";
+import {isStudent} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
+const userinfo = useUserInfoStore()
 const honorTable = ref([
   // {
   //   "student_id": 10000,
@@ -141,6 +146,8 @@ const applyHonorCmd = ref({
 const applyHonorHandler = async () => {
   const resp = await applyHonorApi(toRaw(applyHonorCmd.value))
   ElMessage.success("申请成功，请等待耐心审核~")
+  applyHonorCmd.value.dialogVisible = false
+  await queryHonorHandler()
 }
 
 /**
@@ -152,6 +159,7 @@ const reviewHonorHandler = async (honor_id, state) => {
     honor_id: honor_id,
     state: state
   })
+  await queryHonorHandler()
   ElMessage.success("操作成功")
 }
 
@@ -160,11 +168,16 @@ const reviewHonorHandler = async (honor_id, state) => {
  */
 const removeHonorHandler = async (honor_id) => {
   await delHonorApi({honor_id: honor_id})
+  await queryHonorHandler()
   ElMessage.success("删除成功")
 }
 
 onMounted(async () => {
-  await queryHonorHandler()
+  const auth = userinfo.getAuth()
+  if (isStudent(auth)) {
+    queryHonorCmd.value.student_id = userinfo.id
+    await queryHonorHandler()
+  }
 })
 
 </script>
