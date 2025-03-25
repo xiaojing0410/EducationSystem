@@ -3,12 +3,19 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" v-model="queryAttendanceCmd.course_id" placeholder="请输入课程id" />
-        <el-input class="ipt" v-model="queryAttendanceCmd.semester" placeholder="请输入学期" />
-        <el-input class="ipt" v-model="queryAttendanceCmd.student_id" placeholder="请输入学生id" />
+        <el-input v-if="isTeacher(auth) || isAdmin(auth)" class="ipt" v-model="queryAttendanceCmd.course_id" placeholder="请输入课程id" clearable/>
+        <el-input class="ipt" v-model="queryAttendanceCmd.semester" placeholder="请输入学期" clearable/>
+        <el-input v-if="isTeacher(auth) || isAdmin(auth)" class="ipt" v-model="queryAttendanceCmd.student_id" placeholder="请输入学生id" clearable/>
 
         <el-button @click="queryAttendanceHandler" class="btn" type="primary">查询</el-button>
-        <el-button style="width: 300px" class="btn" type="warning" @click="startAttendanceCmd.dialogVisible = true">开始考勤</el-button>
+        <el-button
+            v-if="isTeacher(auth) || isAdmin(auth)"
+            style="width: 300px"
+            class="btn"
+            type="warning"
+            @click="startAttendanceCmd.dialogVisible = true">
+          开始考勤
+        </el-button>
       </div>
     </div>
 
@@ -41,9 +48,14 @@
         <el-table-column label="上课时间" prop="course.time"></el-table-column>
         <el-table-column label="上课地点" prop="course.loc"></el-table-column>
         <el-table-column label="出勤总数" prop="course.at_total"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="isShowOpt">
           <template #default="{ row }">
-            <el-button type="success" plain @click="updateAttendanceHandler(row.attendance.attendance_id)">
+            <el-button
+                v-if="!row.noShowConfirmOpt"
+                type="success"
+                plain
+                @click="updateAttendanceHandler(row.attendance.attendance_id)"
+            >
               确认出勤
             </el-button>
           </template>
@@ -70,9 +82,17 @@
 // 数据区
 import {addAttendanceApi, queryAttendanceApi, updateAttendanceApi} from "../api/AttendanceApi.js";
 import {ElMessage} from "element-plus";
+import {isAdmin, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
+const userinfo = useUserInfoStore()
+const auth = userinfo.getAuth()
+
+// 是否展示操作栏(只有开始考勤之后才会出现操作栏)
+const isShowOpt = ref(false)
 const courseTable = ref([
   // {
+    // noShowConfirmOpt: false, // 是否展示该条数据的确认出勤
   //   attendance: {
   //     attendance_id: 2,
   //     course_id: 1,
@@ -116,7 +136,8 @@ const queryAttendanceCmd = ref({
   student_id: null,
 })
 const queryAttendanceHandler = async () => {
-  const resp = queryAttendanceApi(toRaw(queryAttendanceCmd.value))
+  const resp = await queryAttendanceApi(toRaw(queryAttendanceCmd.value))
+  isShowOpt.value = false
   courseTable.value = resp.data
 }
 
@@ -129,6 +150,12 @@ const startAttendanceCmd = ref({
 })
 const startAttendanceHandler = async () => {
   const resp = await addAttendanceApi(toRaw(startAttendanceCmd.value))
+  // 开始考勤之后，按照开始考勤的课程id来查询考勤信息
+  queryAttendanceCmd.value.course_id = startAttendanceCmd.value.course_id
+  await queryAttendanceHandler()
+
+  isShowOpt.value = true
+  startAttendanceCmd.value = false
   ElMessage.success("添加考勤成功")
 }
 
@@ -137,12 +164,22 @@ const startAttendanceHandler = async () => {
  */
 const updateAttendanceHandler = async (id) => {
   const resp = await updateAttendanceApi({ attendance_id: id })
+  // 每次开始考勤之后每条数据只能进行一次确认出勤
+  const course = courseTable.value.find(item => item.attendance?.attendance_id === id);
+  if (course) {
+    course.noShowConfirmOpt = true;
+  }
+  // 更新数据(这里不能直接通过查询 handler 来更新，因为后端没有保存状态，因此由前端来处理)
+  course.attendance.at_count += 1
   ElMessage.success("确认成功")
 }
 
-/**
- * 考勤由于后端没有做查询兼容，因此页面初始化不进行查询
- */
+onMounted(async () => {
+  if (isStudent(userinfo.getAuth())) {
+    queryAttendanceCmd.value.student_id = userinfo.id
+    await queryAttendanceHandler(toRaw(queryAttendanceCmd.value))
+  }
+})
 </script>
 
 <style lang="scss" scoped>
