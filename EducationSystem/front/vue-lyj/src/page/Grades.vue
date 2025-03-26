@@ -3,7 +3,7 @@
     <!-- 操作区 -->
     <div class="actions">
       <div class="row">
-        <el-input class="ipt" v-model="queryGradesCmd.class_id" placeholder="请输入班级id" />
+        <el-input v-if="!isParent(userinfo.getAuth()) && !isStudent(userinfo.getAuth())" class="ipt" v-model="queryGradesCmd.class_id" placeholder="请输入班级id" />
         <el-input class="ipt" v-model="queryGradesCmd.semester" placeholder="请输入学期" />
         <el-input class="ipt" v-model="queryGradesCmd.student_id" placeholder="请输入学生id" />
         <el-button @click="queryGradesHandler" class="btn" type="primary">查询</el-button>
@@ -68,6 +68,7 @@
 import {queryGradesApi, updateGradesApi} from "../api/GradesApi.js";
 import {ElMessage} from "element-plus";
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
 
 const userinfo = useUserInfoStore()
 const gradesTable = ref([
@@ -120,10 +121,12 @@ const updateGradesCmd = ref({
 const openUpdateGradesHandler = (row) => {
   updateGradesCmd.value.dialogVisible = true
   updateGradesCmd.value.grades_id = row.grades.grades_id
-  updateGradesCmd.value.grades_id = row.grades.score
+  updateGradesCmd.value.score = row.grades.score
 }
 const updateGradesHandle = async () => {
   const resp = await updateGradesApi(toRaw(updateGradesCmd.value))
+  updateGradesCmd.value.dialogVisible = false
+  await queryGradesHandler()
   ElMessage.success("成绩修改成功")
 }
 

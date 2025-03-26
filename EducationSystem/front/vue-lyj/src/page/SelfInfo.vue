@@ -158,6 +158,8 @@ const updateUserinfoHandler = async () => {
     email: userTable.value.email,
     phone: userTable.value.phone,
   })
+  await querySelfInfoHandler()
+  ElMessage.success("修改成功")
 }
 
 

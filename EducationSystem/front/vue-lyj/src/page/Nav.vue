@@ -59,7 +59,7 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Evaluation'}">
+      <router-link :to="{name: 'Evaluation'}" v-if="!isParent(userinfo.getAuth())">
         <el-menu-item index="8">
           <span>评测中心</span>
         </el-menu-item>
@@ -77,13 +77,13 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Recommend'}">
+      <router-link :to="{name: 'Recommend'}" v-if="!isParent(userinfo.getAuth())">
         <el-menu-item index="8.a">
           <span>生成个性化推荐</span>
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'SelfInfo'}">
+      <router-link :to="{name: 'SelfInfo'}" v-if="isStudent(userinfo.getAuth())">
         <el-menu-item index="9">
           <span>个人信息</span>
         </el-menu-item>
@@ -109,7 +109,7 @@
 <script setup>
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 import router from "../infra/router.js";
-import {getAuthName, isAdmin, isTeacher} from "../infra/tools/authTools.js";
+import {getAuthName, isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
 
 const userinfo = useUserInfoStore()
 

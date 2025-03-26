@@ -4,10 +4,10 @@
       <h2>学生评测</h2>
       <hr style="margin-bottom: 20px;">
       <el-form>
-        <el-form-item label="学生 ID">
-          <el-input v-model="queryEvaluationCmd.student_id" placeholder="请输入学生 ID" style="width: 200px"/>
-          <el-input v-model="mainTable.user.username" style="width: 200px" disabled/>
-          <el-button @click="queryEvaluationHandler" type="primary">查询</el-button>
+        <el-form-item label="学生 ID" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
+          <el-input  v-model="queryEvaluationCmd.student_id" placeholder="请输入学生 ID" style="width: 200px"/>
+          <el-input  v-model="mainTable.user.username" style="width: 200px" disabled/>
+          <el-button  @click="queryEvaluationHandler" type="primary">查询</el-button>
         </el-form-item>
       </el-form>
 
@@ -33,7 +33,7 @@
         <el-table-column label="AI 建议">
           <template #default="{ row }">
             <el-button color="#626aef" plain @click="aiFeedbackHandler(row.type)">获取 AI 建议</el-button>
-            <p v-if="row.ai_Suggestion">AI 建议: {{ row.ai_Suggestion }}</p>
+            <p v-if="row.ai_suggestion">AI 建议: {{ row.ai_suggestion }}</p>
           </template>
         </el-table-column>
       </el-table>
@@ -72,7 +72,7 @@ import { ref } from 'vue';
 import {ElLoading, ElMessage} from 'element-plus';
 import {addEvaluationApi, aiFeedbackApi, queryEvaluationApi} from "../api/EvaluationApi.js";
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
-import {isStudent} from "../infra/tools/authTools.js";
+import {isAdmin, isStudent, isTeacher} from "../infra/tools/authTools.js";
 
 const userinfo = useUserInfoStore()
 const mainTable = ref({
@@ -82,7 +82,7 @@ const mainTable = ref({
     teacher_id: null
   },
   evaluation: {
-    evalution_id: null,
+    evaluation_id: null,
     student_id: null,
     feedback: "",
     ai_feedback: ""
@@ -110,11 +110,11 @@ const queryEvaluationHandler = async () => {
   // 对于缺少的类型，补充默认值
   missingTypes.forEach(type => {
     evaluationSub.push({
-      evalution_sub_id: null,
+      evaluation_sub_id: null,
       type: type,
       student_id: 10000, // 根据实际情况设置学生ID
       score: 0,
-      ai_Suggestion: null,
+      ai_suggestion: null,
     });
   });
   evaluationSub = evaluationSub.sort((a, b) => a.type - b.type);
@@ -123,7 +123,7 @@ const queryEvaluationHandler = async () => {
   mainTable.value = resp.data;
   if (mainTable.value.evaluation == null) {
     mainTable.value.evaluation = {
-      evalution_id: null,
+      evaluation_id: null,
           student_id: null,
           feedback: "",
           ai_feedback: ""
@@ -136,7 +136,7 @@ const queryEvaluationHandler = async () => {
  */
 const aiFeedbackHandler = async (type) => {
   const loading = ElLoading.service({
-    text: '加载中...',  // 加载时的提示文本
+    text: '评测中...',  // 加载时的提示文本
     background: 'rgba(0, 0, 0, 0.7)'  // 背景透明度
   });
 
@@ -151,7 +151,7 @@ const aiFeedbackHandler = async (type) => {
     }
     const target = mainTable.value.evaluationSub.find(item => item.type === type);
     if (target) {
-      target.ai_Suggestion = resp.data;
+      target.ai_suggestion = resp.data;
     }
   } finally {
     loading.close();
@@ -167,9 +167,8 @@ const addEvaluationHandler = async () => {
     feedback: mainTable.value.evaluation.feedback,
     ai_feedback: mainTable.value.evaluation.ai_feedback,
     addEvaluationSubs: mainTable.value.evaluationSub
-        .map(({ type, score }) => ({ type, score })) // 提取需要的字段
   })
-  ElMessage.success("添加成功")
+  ElMessage.success("保存成功")
 }
 
 onMounted(async () => {

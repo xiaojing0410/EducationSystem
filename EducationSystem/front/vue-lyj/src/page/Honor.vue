@@ -38,7 +38,7 @@
         <el-table-column prop="classInfo.major" label="专业" />
         <el-table-column prop="classInfo.grade" label="班级" />
         <el-table-column prop="classInfo.year" label="学年" />
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="!isParent(userinfo.getAuth())">
           <template #default="{ row }">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
               <el-button
@@ -97,7 +97,7 @@
 // 数据区
 import {applyHonorApi, delHonorApi, queryHonorApi, updateHonorApi} from "../api/HonorApi.js";
 import {ElMessage} from "element-plus";
-import {isStudent} from "../infra/tools/authTools.js";
+import {isParent, isStudent} from "../infra/tools/authTools.js";
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
 const userinfo = useUserInfoStore()

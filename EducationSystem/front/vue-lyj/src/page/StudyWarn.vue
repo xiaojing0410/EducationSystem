@@ -3,8 +3,8 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryWarnCmd.student_id" class="ipt" placeholder="请输入学生id" />
-        <el-button class="btn" type="primary" @click="queryWarnHandler">查询</el-button>
+        <el-input v-if="!isStudent(userinfo.getAuth())" v-model="queryWarnCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-button v-if="!isStudent(userinfo.getAuth())" class="btn" type="primary" @click="queryWarnHandler">查询</el-button>
       </div>
     </div>
 
@@ -41,7 +41,10 @@
 
 <script setup>
 import {queryStudyWarnApi} from "../api/StudyWarnApi.js";
+import {isStudent} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
+const userinfo = useUserInfoStore()
 const warnTable = ref([
   // {
   //   student_id: 10000,
@@ -98,6 +101,10 @@ const queryWarnHandler = async () => {
   })
   warnTable.value = resp.data
 }
+
+onMounted(async () => {
+  await queryWarnHandler()
+})
 
 </script>
 

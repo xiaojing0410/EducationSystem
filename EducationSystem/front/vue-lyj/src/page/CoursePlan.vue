@@ -3,9 +3,9 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" v-model="queryCoursePlanCmd.semester" placeholder="请输入学期" />
+        <el-input v-if="!isParent(userinfo.getAuth())" class="ipt" v-model="queryCoursePlanCmd.semester" placeholder="请输入学期" />
         <el-input v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="ipt" v-model="queryCoursePlanCmd.class_id" placeholder="请输入班级id" />
-        <el-input v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="ipt" v-model="queryCoursePlanCmd.student_id" placeholder="请输入学生id" />
+        <el-input v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth()) || isParent(userinfo.getAuth())" class="ipt" v-model="queryCoursePlanCmd.student_id" placeholder="请输入学生id" />
         <el-button @click="queryCoursePlanHandler" class="btn" type="primary">查询</el-button>
         <el-button v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="btn" type="warning" @click="addCoursePlanCmd.dialogVisible = true">新增课程安排</el-button>
       </div>
@@ -81,7 +81,7 @@
 // 数据区
 import {addCoursePlanApi, queryCoursePlanApi} from "../api/CoursePlanApi.js";
 import {ElMessage} from "element-plus";
-import {isAdmin, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 
 const userinfo = useUserInfoStore()
@@ -144,7 +144,7 @@ const addCoursePlanHandler = async () => {
 }
 
 onMounted(async () => {
-  await queryCoursePlanHandler()
+  // await queryCoursePlanHandler()
 })
 
 

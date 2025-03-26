@@ -3,10 +3,10 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryRelearnCmd.student_id" class="ipt" placeholder="请输入学生id" />
-        <el-input v-model="queryRelearnCmd.semester" class="ipt" placeholder="请输入学期" />
-        <el-button class="btn" type="primary" @click="queryRelearnHandler">查询</el-button>
-        <el-button class="btn" type="warning" @click="addRelearnCmd.isShow = true">新增重修记录</el-button>
+        <el-input v-if="isParent(userinfo.getAuth())" v-model="queryRelearnCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-input v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())" v-model="queryRelearnCmd.semester" class="ipt" placeholder="请输入学期" />
+        <el-button v-if="!isStudent(userinfo.getAuth())" class="btn" type="primary" @click="queryRelearnHandler">查询</el-button>
+        <el-button v-if="isAdmin(userinfo.getAuth())" class="btn" type="warning" @click="addRelearnCmd.isShow = true">新增重修记录</el-button>
       </div>
     </div>
 
@@ -42,7 +42,7 @@
           <el-table-column prop="classInfo.grade" label="年级"></el-table-column>
           <el-table-column prop="classInfo.year" label="届数"></el-table-column>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
           <template #default="{ row }">
             <el-button type="warning" @click="openUpdateRelearnDialog(row)">更新重修成绩</el-button>
           </template>
@@ -119,7 +119,10 @@
 
 import {addRelearnApi, queryRelearnApi, updateRelearnApi} from "../api/RelearnApi.js";
 import {ElMessage} from "element-plus";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
 
+const userinfo = useUserInfoStore()
 const relearnTable = ref([
   //   {
   // "student_id": 10000,
@@ -181,6 +184,8 @@ const addRelearnCmd = ref({
 })
 const addRelearnHandler = async () => {
   await addRelearnApi(toRaw(addRelearnCmd.value))
+  addRelearnCmd.value.isShow = false
+  await queryRelearnHandler()
   ElMessage.success("添加成功")
 }
 
@@ -196,14 +201,22 @@ const openUpdateRelearnDialog = (row) => {
   updateRelearnCmd.value = {
     isShow: true,
     relearn_id: row.relearn.relearn_id,
-    score_new: row.relearn.score_old,
+    score_new: row.relearn.score_new,
   }
 }
 const updateRelearnHandler = async () => {
   await updateRelearnApi(toRaw(updateRelearnCmd.value))
+  updateRelearnCmd.value.isShow = false
+  await queryRelearnHandler()
   ElMessage.success("更新成功")
 }
 
+onMounted(async () => {
+  if (isStudent(userinfo.getAuth())) {
+    queryRelearnCmd.value.student_id = userinfo.id
+    await queryRelearnHandler()
+  }
+})
 
 </script>
 
