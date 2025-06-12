@@ -3,13 +3,21 @@
     <!-- 操作区 -->
     <div class="actions">
       <div class="row">
-        <el-input class="ipt" v-model="queryGradesCmd.class_id" placeholder="请输入班级id" />
+        <!-- 填学号；填班级id；填学号+学期；填班级id+学期 -->
+        <el-autocomplete clearable
+          v-model="queryGradesCmd.class_id" class="ipt" placeholder="请输入班级id"
+          :fetch-suggestions="queryClassBasicinfoHandler"
+          @select="handleSelectClassId"
+          :hide-loading="true"  style="width: 200px; margin-right: 20px;"
+        />
+        <el-autocomplete clearable
+          v-model="queryGradesCmd.student_id" class="ipt" placeholder="请输入学号"
+          :fetch-suggestions="queryUserBasicinfoHandler"
+          @select="handleSelectStudent"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
         <el-input class="ipt" v-model="queryGradesCmd.semester" placeholder="请输入学期" />
-        <el-input class="ipt" v-model="queryGradesCmd.student_id" placeholder="请输入学生id" />
         <el-button @click="queryGradesHandler" class="btn" type="primary">查询</el-button>
-      </div>
-      <div class="row">
-        <el-button type="success" style="width: 200px">生成ai个性化推荐</el-button>
       </div>
     </div>
 
@@ -20,8 +28,9 @@
         <el-table-column prop="user.username" label="姓名" width="120"></el-table-column>
         <el-table-column prop="classInfo.college" label="学院" width="160"></el-table-column>
         <el-table-column prop="classInfo.major" label="专业" width="140"></el-table-column>
-        <el-table-column prop="grades.grades_id" label="成绩ID" width="100"></el-table-column>
+        <!-- <el-table-column prop="grades.grades_id" label="成绩ID" width="100"></el-table-column> -->
         <el-table-column prop="grades.course_id" label="课程ID" width="100"></el-table-column>
+        <el-table-column prop="courseCode.course_name" label="课程" width="100"></el-table-column>
         <el-table-column prop="grades.score" label="成绩" width="100"></el-table-column>
         <el-table-column prop="grades.gpa" label="GPA" width="100"></el-table-column>
 
@@ -40,7 +49,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="!isStudent(auth) &&~ !isParent(userinfo.getAuth())">
           <template #default="{ row }">
             <el-button type="warning" @click="openUpdateGradesHandler(row)">编辑</el-button>
           </template>
@@ -68,9 +77,14 @@
 
 <script setup>
 // 数据区
-import {queryGradesApi, updateGradesApi} from "../api/Grades.js";
+import {queryGradesApi, updateGradesApi} from "../api/GradesApi.js";
 import {ElMessage} from "element-plus";
-
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {queryClassBasicInfoApi} from "../api/ClassApi.js";
+import {queryUserBasicinfoApi} from "../api/UserinfoApi.js";
+const userinfo = useUserInfoStore()
+const auth = userinfo.getAuth()
 const gradesTable = ref([
   // {
   //   user: {
@@ -121,13 +135,64 @@ const updateGradesCmd = ref({
 const openUpdateGradesHandler = (row) => {
   updateGradesCmd.value.dialogVisible = true
   updateGradesCmd.value.grades_id = row.grades.grades_id
-  updateGradesCmd.value.grades_id = row.grades.score
+  updateGradesCmd.value.score = row.grades.score
 }
 const updateGradesHandle = async () => {
   const resp = await updateGradesApi(toRaw(updateGradesCmd.value))
+  updateGradesCmd.value.dialogVisible = false
+  await queryGradesHandler()
   ElMessage.success("成绩修改成功")
 }
 
+// 班级 - 查询
+const queryClassBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryClassBasicInfoApi({
+    info: queryGradesCmd.value.class_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+// 学生 - 查询
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: queryGradesCmd.value.student_id,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectClassId = (item) => {
+  queryGradesCmd.value.class_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', queryGradesCmd.value.class_id)
+}
+const handleSelectStudent = (item) => {
+  queryGradesCmd.value.student_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', queryGradesCmd.value.student_id)
+}
 /**
  * 只能通过点击按钮查询
  */

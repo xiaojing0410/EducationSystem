@@ -3,10 +3,21 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryPhysicalCmd.student_id" class="ipt" placeholder="学号" />
-        <el-input v-model="queryPhysicalCmd.class_id" class="ipt" placeholder="班级id" />
-        <el-input v-model="queryPhysicalCmd.year" class="ipt" placeholder="学年" />
-        <el-button @click="queryPhysicalHandler" class="btn" type="primary">查询</el-button>
+        <!-- 填学号；填班级+学期 -->
+        <el-autocomplete v-if="!isStudent(userinfo.getAuth())" clearable
+          v-model="queryPhysicalCmd.student_id" class="ipt" placeholder="请输入学号"
+          :fetch-suggestions="queryUserBasicinfoHandler"
+          @select="handleSelectStudent"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-autocomplete v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())" clearable  placeholder="班级id"
+          v-model="queryPhysicalCmd.class_id" class="ipt"
+          :fetch-suggestions="queryClassBasicinfoHandler"
+          @select="handleSelectClassId"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-input v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())" v-model="queryPhysicalCmd.year" class="ipt" placeholder="学年" />
+        <el-button v-if="!isStudent(userinfo.getAuth())" @click="queryPhysicalHandler" class="btn" type="primary">查询</el-button>
       </div>
     </div>
 
@@ -38,7 +49,7 @@
         <el-table-column prop="classInfo.major" label="专业" />
         <el-table-column prop="classInfo.grade" label="年级" />
         <el-table-column prop="classInfo.year" label="学制 (年)" />
-        <el-table-column label="操作" >
+        <el-table-column label="操作" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
           <template #default="{ row }">
             <el-button type="warning" @click="openUpdatePhysicalDialog(row)">编辑</el-button>
           </template>
@@ -78,7 +89,7 @@
       </el-form>
       <template #footer>
         <el-button @click="updatePhysicalCmd.isShow = false">取消</el-button>
-        <el-button type="primary" @click="">保存</el-button>
+        <el-button @click="updatePhysicalHandler" type="primary" >保存</el-button>
       </template>
     </el-dialog>
 
@@ -87,9 +98,13 @@
 
 <script setup>
 // 数据区
-import {queryPhysicalApi} from "../api/PhysicalApi.js";
+import {queryPhysicalApi, updatePhysicalApi} from "../api/PhysicalApi.js";
 import {ElMessage} from "element-plus";
-
+import {queryClassBasicInfoApi} from "../api/ClassApi.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {isAdmin, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {queryUserinfoApi, queryUserBasicinfoApi} from "../api/UserinfoApi.js";
+const userinfo = useUserInfoStore()
 const physicalTable = ref([
   // {
   //   student_id: 10000,
@@ -153,8 +168,66 @@ const openUpdatePhysicalDialog = (row) => {
   }
 }
 const updatePhysicalHandler = async () => {
-  await updatePhysicalHandler(toRaw(updatePhysicalCmd.value))
+  await updatePhysicalApi(toRaw(updatePhysicalCmd.value))
+  await queryPhysicalHandler()
+  updatePhysicalCmd.value.isShow = false
   ElMessage.success("修改成功")
+}
+
+onMounted(async () => {
+  if (isStudent(userinfo.getAuth())) {
+    queryPhysicalCmd.value.student_id = userinfo.id
+    await queryPhysicalHandler()
+  }
+})
+// 学生 - 查询
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: queryPhysicalCmd.value.student_id,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+// 班级 - 查询
+const queryClassBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryClassBasicInfoApi({
+    info: queryPhysicalCmd.value.class_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectStudent = (item) => {
+  queryPhysicalCmd.value.student_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', queryPhysicalCmd.value.student_id)
+}
+const handleSelectClassId = (item) => {
+  queryPhysicalCmd.value.class_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', queryPhysicalCmd.value.class_id)
 }
 
 </script>

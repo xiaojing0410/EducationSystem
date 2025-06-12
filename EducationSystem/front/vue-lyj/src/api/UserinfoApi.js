@@ -55,5 +55,20 @@ export const updateUserinfoApi = async (
     )
 }
 
+/**
+ * 查询基础用户信息
+ */
+export const queryUserBasicinfoApi = async (
+    { info, type }
+) => {
+    return await api.get(
+        "/user/like",
+        {
+            params: {
+                info, type
+            }
+        }
+    )
+}
 
 

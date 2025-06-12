@@ -3,21 +3,34 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" v-model="queryCoursePlanCmd.class_id" placeholder="请输入班级id" />
-        <el-input class="ipt" v-model="queryCoursePlanCmd.semester" placeholder="请输入学期" />
-        <el-input class="ipt" v-model="queryCoursePlanCmd.student_id" placeholder="请输入学生id" />
+        <!-- 不填；填学号；填班级id；填学号+学期；填班级id+学期 -->
+        <el-autocomplete v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth()) || isParent(userinfo.getAuth())"  clearable
+          v-model="queryCoursePlanCmd.student_id" class="ipt" placeholder="请输入学号"
+          :fetch-suggestions="queryUserBasicinfoHandler"
+          @select="handleSelectStudent"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-autocomplete v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())"  clearable
+          v-model="queryCoursePlanCmd.class_id" class="ipt" placeholder="请输入班级id"
+          :fetch-suggestions="queryClassBasicinfoHandler"
+          @select="handleSelectClassId"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        
+        <el-input v-if="!isParent(userinfo.getAuth())" clearable class="ipt" v-model="queryCoursePlanCmd.semester" placeholder="请输入学期" />
         <el-button @click="queryCoursePlanHandler" class="btn" type="primary">查询</el-button>
-        <el-button class="btn" type="warning" @click="addCoursePlanCmd.dialogVisible = true">新增课程安排</el-button>
+        <el-button v-if="isTeacher(userinfo.getAuth()) || isAdmin(userinfo.getAuth())" class="btn" type="warning" @click="addCoursePlanCmd.dialogVisible = true">新增课程安排</el-button>
       </div>
     </div>
 
     <!-- 数据区 -->
     <div class="data">
       <el-table :data="coursePlanTable" style="width: 100%">
-        <el-table-column label="课程 ID" prop="course_id" />
+        <el-table-column label="课程安排 ID" prop="course_id" />
         <el-table-column label="学期" prop="semester" />
         <el-table-column label="上课时间" prop="time" />
         <el-table-column label="上课地点" prop="loc" />
+        <el-table-column label="课程id" prop="courseCode.course_code_id" />
         <el-table-column label="课程名称" :prop="'courseCode.course_name'" />
         <el-table-column label="课程类型" :prop="'courseCode.type'" />
         <el-table-column label="学分" :prop="'courseCode.credit'" />
@@ -42,8 +55,14 @@
         width="50%"
     >
       <el-form :model="addCoursePlanCmd" label-width="120px">
-        <el-form-item label="课程代码">
-          <el-input v-model="addCoursePlanCmd.course_code_id" disabled></el-input>
+        
+        <el-form-item label="课程id">
+          <el-autocomplete clearable
+            v-model="addCoursePlanCmd.course_code_id" class="ipt"
+            :fetch-suggestions="queryCourseCodeinfoHandler"
+            @select="handleSelectCourseCode"
+            :hide-loading="true"
+          />
         </el-form-item>
 
         <el-form-item label="学期">
@@ -51,11 +70,21 @@
         </el-form-item>
 
         <el-form-item label="教师 ID">
-          <el-input v-model="addCoursePlanCmd.teacher_id" type="number"></el-input>
+          <el-autocomplete clearable
+          v-model="addCoursePlanCmd.teacher_id" class="ipt"
+          :fetch-suggestions="queryUserBasicinfoHandler2"
+          @select="handleSelectTeacher"
+          :hide-loading="true"
+        />
         </el-form-item>
 
         <el-form-item label="班级 ID">
-          <el-input v-model="addCoursePlanCmd.class_id" type="number"></el-input>
+          <el-autocomplete clearable
+            v-model="addCoursePlanCmd.class_id" class="ipt"
+            :fetch-suggestions="queryClassBasicinfoHandler2"
+            @select="handleSelectClassId2"
+            :hide-loading="true"
+          />
         </el-form-item>
 
         <el-form-item label="上课时间">
@@ -78,9 +107,14 @@
 
 <script setup>
 // 数据区
+import {queryUserinfoApi, queryUserBasicinfoApi} from "../api/UserinfoApi.js";
+import {queryClassBasicInfoApi} from "../api/ClassApi.js";
 import {addCoursePlanApi, queryCoursePlanApi} from "../api/CoursePlanApi.js";
 import {ElMessage} from "element-plus";
-
+import {isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {queryCourseApi} from "../api/CourseApi.js";
+const userinfo = useUserInfoStore()
 const coursePlanTable = ref([
   // {
   //   course_id: 1,
@@ -134,11 +168,138 @@ const addCoursePlanCmd = ref({
 })
 const addCoursePlanHandler = async () => {
   await addCoursePlanApi(toRaw(addCoursePlanCmd.value))
+  addCoursePlanCmd.value.dialogVisible = false
+  await queryCoursePlanHandler()
   ElMessage.success("添加成功")
 }
+/**
+ * 自动补全
+ */
+// 学生 - 查询
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: queryCoursePlanCmd.value.student_id,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+// 教师 - 新增课程安排信息
+const queryUserBasicinfoHandler2 = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: addCoursePlanCmd.value.teacher_id,
+    type: 2
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+// 班级 - 查询
+const queryClassBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryClassBasicInfoApi({
+    info: queryCoursePlanCmd.value.class_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+// 班级 - 新增
+const queryClassBasicinfoHandler2 = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryClassBasicInfoApi({
+    info: addCoursePlanCmd.value.class_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+// 课程
+const queryCourseCodeinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryCourseApi({
+    course_info: addCoursePlanCmd.value.course_code_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item.course_code_id + ' | ' + item.course_name + ' | ' + item.type + ' | 学分' + item.credit, // 显示 user_id 字段
+      label: item.course_code_id + ' | ' + item.course_name + ' | ' + item.type + ' | 学分' + item.credit
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectStudent = (item) => {
+  queryCoursePlanCmd.value.student_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', queryCoursePlanCmd.value.student_id)
+}
+const handleSelectTeacher = (item) => {
+  addCoursePlanCmd.value.teacher_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', addCoursePlanCmd.value.teacher_id)
+}
+const handleSelectClassId = (item) => {
+  queryCoursePlanCmd.value.class_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', queryCoursePlanCmd.value.class_id)
+}
+const handleSelectClassId2 = (item) => {
+  addCoursePlanCmd.value.class_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', addCoursePlanCmd.value.class_id)
+}
 
+const handleSelectCourseCode = (item) => {
+  addCoursePlanCmd.value.course_code_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', addCoursePlanCmd.value.course_code_id)
+}
 onMounted(async () => {
-  await queryCoursePlanHandler()
+  // await queryCoursePlanHandler()
 })
 
 
@@ -178,3 +339,5 @@ onMounted(async () => {
 }
 
 </style>
+
+

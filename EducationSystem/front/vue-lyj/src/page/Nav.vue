@@ -8,28 +8,24 @@
         default-active="0"
     >
       <el-menu-item index="0">
-        <strong>学生学习成效智能评价系统</strong>
+        <strong style="line-height:20px">基于Web的高校学生<br>智能学习成效评价系统</strong>
       </el-menu-item>
 
-      <router-link :to="{name: 'UserInfo'}">
+      <router-link :to="{name: 'UserInfo'}"> 
         <el-menu-item index="1">
           <span>用户管理</span>
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Class'}">
+      <router-link :to="{name: 'Class'}" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
         <el-menu-item index="1.1">
           <span>班级管理</span>
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Honor'}">
-        <el-menu-item index="2">
-          <span>荣誉管理</span>
-        </el-menu-item>
-      </router-link>
 
-      <router-link :to="{name: 'Course'}">
+
+      <router-link :to="{name: 'Course'}" v-if="isAdmin(userinfo.getAuth()) || isTeacher(userinfo.getAuth())">
         <el-menu-item index="3">
           <span>课程管理</span>
         </el-menu-item>
@@ -59,9 +55,16 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'Evaluation'}">
-        <el-menu-item index="8">
-          <span>评测中心</span>
+
+      <router-link :to="{name: 'Honor'}">
+        <el-menu-item index="2">
+          <span>荣誉管理</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Relearn'}">
+        <el-menu-item index="8.2">
+          <span>重修记录</span>
         </el-menu-item>
       </router-link>
 
@@ -71,7 +74,19 @@
         </el-menu-item>
       </router-link>
 
-      <router-link :to="{name: 'SelfInfo'}">
+      <router-link :to="{name: 'Evaluation'}" v-if="!isParent(userinfo.getAuth())">
+        <el-menu-item index="8">
+          <span>评测中心</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'Recommend'}" v-if="!isParent(userinfo.getAuth())">
+        <el-menu-item index="8.a">
+          <span>个性化推荐</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link :to="{name: 'SelfInfo'}" v-if="isStudent(userinfo.getAuth())">
         <el-menu-item index="9">
           <span>个人信息</span>
         </el-menu-item>
@@ -97,7 +112,7 @@
 <script setup>
 import {useUserInfoStore} from "../infra/store/userinfoStore.js";
 import router from "../infra/router.js";
-import {getAuthName} from "../infra/tools/authTools.js";
+import {getAuthName, isAdmin, isParent, isStudent, isTeacher} from "../infra/tools/authTools.js";
 
 const userinfo = useUserInfoStore()
 
@@ -114,6 +129,8 @@ const logoutHandler = () => {
 #nav {
   width: 100%;
   height: 100%;
+  // max-width: 100vw;
+  // max-height: 100vh;
   display: flex;
 }
 #nav .logo {
@@ -127,10 +144,15 @@ const logoutHandler = () => {
   min-width: 220px;
   max-width: 220px; /* 防止被缩小或放大 */
   height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 #nav .container-right {
-  flex-grow: 1; /* 填补剩余宽度 */
+  width: calc(100% - 220px);
+  padding: 5px;
+  // max-width: 100vh;
+  // flex-grow: 1; /* 填补剩余宽度 */
 }
 
 #nav .top-menu {
@@ -158,5 +180,14 @@ const logoutHandler = () => {
 
 .col:last-child:hover {
   color: #E74C3C;  /* 悬停时变成红色，提示危险操作 */
+}
+.context{
+  width: 100%;
+  height: calc(100% - 150px);
+  
+  // max-width: 100vw;
+}
+a {
+  text-decoration: none;
 }
 </style>

@@ -3,10 +3,22 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryHonorCmd.student_id" class="ipt" placeholder="请输入学生id" />
-        <el-input v-model="queryHonorCmd.class_id" class="ipt" placeholder="请输入班级id" />
-        <el-button @click="queryHonorHandler" class="btn" type="primary">查询</el-button>
-        <el-button class="btn" type="warning" @click="applyHonorCmd.dialogVisible = true">申请荣誉</el-button>
+        <el-autocomplete v-if="!isStudent(userinfo.getAuth())"  clearable
+          v-model="queryHonorCmd.student_id" class="ipt" placeholder="请输入学号"
+          :fetch-suggestions="queryUserBasicinfoHandler"
+          @select="handleSelectStudent"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-autocomplete v-if="!isStudent(userinfo.getAuth())"  clearable
+          v-model="queryHonorCmd.class_id" class="ipt" placeholder="请输入班级id"
+          :fetch-suggestions="queryClassBasicinfoHandler"
+          @select="handleSelectClassId"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <!-- <el-input v-if="!isStudent(userinfo.getAuth())" v-model="queryHonorCmd.student_id" class="ipt" placeholder="请输入学生id" />
+        <el-input v-if="!isStudent(userinfo.getAuth())" v-model="queryHonorCmd.class_id" class="ipt" placeholder="请输入班级id" /> -->
+        <el-button v-if="!isStudent(userinfo.getAuth())" @click="queryHonorHandler" class="btn" type="primary">查询</el-button>
+        <el-button v-if="isStudent(userinfo.getAuth())" class="btn" type="warning" @click="applyHonorCmd.dialogVisible = true">申请荣誉</el-button>
       </div>
     </div>
 
@@ -38,10 +50,11 @@
         <el-table-column prop="classInfo.major" label="专业" />
         <el-table-column prop="classInfo.grade" label="班级" />
         <el-table-column prop="classInfo.year" label="学年" />
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="!isParent(userinfo.getAuth())">
           <template #default="{ row }">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
               <el-button
+                  v-if="!isStudent(userinfo.getAuth())"
                   type="success"
                   plain
                   @click="reviewHonorHandler(row.honor.honor_id, 1)"
@@ -49,6 +62,7 @@
                 通过
               </el-button>
               <el-button
+                  v-if="!isStudent(userinfo.getAuth())"
                   type="warning"
                   plain
                   @click="reviewHonorHandler(row.honor.honor_id, -1)"
@@ -93,9 +107,13 @@
 
 <script setup>
 // 数据区
+import {queryUserBasicinfoApi} from "../api/UserinfoApi.js";
 import {applyHonorApi, delHonorApi, queryHonorApi, updateHonorApi} from "../api/HonorApi.js";
 import {ElMessage} from "element-plus";
-
+import {isParent, isStudent} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {queryClassBasicInfoApi} from "../api/ClassApi.js";
+const userinfo = useUserInfoStore()
 const honorTable = ref([
   // {
   //   "student_id": 10000,
@@ -141,6 +159,8 @@ const applyHonorCmd = ref({
 const applyHonorHandler = async () => {
   const resp = await applyHonorApi(toRaw(applyHonorCmd.value))
   ElMessage.success("申请成功，请等待耐心审核~")
+  applyHonorCmd.value.dialogVisible = false
+  await queryHonorHandler()
 }
 
 /**
@@ -152,6 +172,7 @@ const reviewHonorHandler = async (honor_id, state) => {
     honor_id: honor_id,
     state: state
   })
+  await queryHonorHandler()
   ElMessage.success("操作成功")
 }
 
@@ -160,11 +181,65 @@ const reviewHonorHandler = async (honor_id, state) => {
  */
 const removeHonorHandler = async (honor_id) => {
   await delHonorApi({honor_id: honor_id})
+  await queryHonorHandler()
   ElMessage.success("删除成功")
 }
-
+/**
+ * 自动补全
+ */
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: queryHonorCmd.value.student_id,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const queryClassBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryClassBasicInfoApi({
+    info: queryHonorCmd.value.class_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectStudent = (item) => {
+  queryHonorCmd.value.student_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', queryHonorCmd.value.student_id)
+}
+const handleSelectClassId = (item) => {
+  queryHonorCmd.value.class_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', queryHonorCmd.value.class_id)
+}
 onMounted(async () => {
-  await queryHonorHandler()
+  const auth = userinfo.getAuth()
+  if (isStudent(auth)) {
+    queryHonorCmd.value.student_id = userinfo.id
+    await queryHonorHandler()
+  }
 })
 
 </script>

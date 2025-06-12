@@ -3,12 +3,29 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" v-model="queryAttendanceCmd.course_id" placeholder="请输入课程id" />
-        <el-input class="ipt" v-model="queryAttendanceCmd.semester" placeholder="请输入学期" />
-        <el-input class="ipt" v-model="queryAttendanceCmd.student_id" placeholder="请输入学生id" />
-
+        <!-- 填学号；填课程id；填学号+学期 -->
+        <el-autocomplete v-if="isTeacher(auth) || isAdmin(auth)" clearable placeholder="请输入课程id"
+          v-model="queryAttendanceCmd.course_id" 
+          :fetch-suggestions="queryCourseCodeinfoHandler"
+          @select="handleSelectCourseCode"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-autocomplete v-if="isTeacher(auth) || isAdmin(auth)"  clearable
+          v-model="queryAttendanceCmd.student_id" class="ipt" placeholder="请输入学号"
+          :fetch-suggestions="queryUserBasicinfoHandler"
+          @select="handleSelectStudent"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-input class="ipt" v-model="queryAttendanceCmd.semester" placeholder="请输入学期" clearable/>
         <el-button @click="queryAttendanceHandler" class="btn" type="primary">查询</el-button>
-        <el-button style="width: 300px" class="btn" type="warning" @click="startAttendanceCmd.dialogVisible = true">开始考勤</el-button>
+        <el-button
+            v-if="isTeacher(auth) || isAdmin(auth)"
+            style="width: 300px"
+            class="btn"
+            type="warning"
+            @click="startAttendanceCmd.dialogVisible = true">
+          开始考勤
+        </el-button>
       </div>
     </div>
 
@@ -41,9 +58,14 @@
         <el-table-column label="上课时间" prop="course.time"></el-table-column>
         <el-table-column label="上课地点" prop="course.loc"></el-table-column>
         <el-table-column label="出勤总数" prop="course.at_total"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="isShowOpt">
           <template #default="{ row }">
-            <el-button type="success" plain @click="updateAttendanceHandler(row.attendance.attendance_id)">
+            <el-button
+                v-if="!row.noShowConfirmOpt"
+                type="success"
+                plain
+                @click="updateAttendanceHandler(row.attendance.attendance_id)"
+            >
               确认出勤
             </el-button>
           </template>
@@ -54,7 +76,12 @@
     <el-dialog v-model="startAttendanceCmd.dialogVisible" title="开始考勤" width="500px">
       <el-form :model="startAttendanceCmd" label-width="100px">
         <el-form-item label="课程名称">
-          <el-input v-model="startAttendanceCmd.course_id" placeholder="请输入课程id" />
+          <el-autocomplete v-if="isTeacher(auth) || isAdmin(auth)" clearable placeholder="请输入课程id"
+            v-model="startAttendanceCmd.course_id" 
+            :fetch-suggestions="queryCourseCodeinfoHandler2"
+            @select="handleSelectCourseCode2"
+            :hide-loading="true" 
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -68,11 +95,20 @@
 
 <script setup>
 // 数据区
+import {queryUserBasicinfoApi} from "../api/UserinfoApi.js";
 import {addAttendanceApi, queryAttendanceApi, updateAttendanceApi} from "../api/AttendanceApi.js";
 import {ElMessage} from "element-plus";
+import {isAdmin, isStudent, isTeacher} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {queryCourseApi} from "../api/CourseApi.js";
+const userinfo = useUserInfoStore()
+const auth = userinfo.getAuth()
 
+// 是否展示操作栏(只有开始考勤之后才会出现操作栏)
+const isShowOpt = ref(false)
 const courseTable = ref([
   // {
+    // noShowConfirmOpt: false, // 是否展示该条数据的确认出勤
   //   attendance: {
   //     attendance_id: 2,
   //     course_id: 1,
@@ -116,7 +152,8 @@ const queryAttendanceCmd = ref({
   student_id: null,
 })
 const queryAttendanceHandler = async () => {
-  const resp = queryAttendanceApi(toRaw(queryAttendanceCmd.value))
+  const resp = await queryAttendanceApi(toRaw(queryAttendanceCmd.value))
+  isShowOpt.value = false
   courseTable.value = resp.data
 }
 
@@ -129,6 +166,12 @@ const startAttendanceCmd = ref({
 })
 const startAttendanceHandler = async () => {
   const resp = await addAttendanceApi(toRaw(startAttendanceCmd.value))
+  // 开始考勤之后，按照开始考勤的课程id来查询考勤信息
+  queryAttendanceCmd.value.course_id = startAttendanceCmd.value.course_id
+  await queryAttendanceHandler()
+
+  isShowOpt.value = true
+  startAttendanceCmd.value = false
   ElMessage.success("添加考勤成功")
 }
 
@@ -137,12 +180,94 @@ const startAttendanceHandler = async () => {
  */
 const updateAttendanceHandler = async (id) => {
   const resp = await updateAttendanceApi({ attendance_id: id })
+  // 每次开始考勤之后每条数据只能进行一次确认出勤
+  const course = courseTable.value.find(item => item.attendance?.attendance_id === id);
+  if (course) {
+    course.noShowConfirmOpt = true;
+  }
+  // 更新数据(这里不能直接通过查询 handler 来更新，因为后端没有保存状态，因此由前端来处理)
+  course.attendance.at_count += 1
   ElMessage.success("确认成功")
 }
 
-/**
- * 考勤由于后端没有做查询兼容，因此页面初始化不进行查询
- */
+// 课程
+const queryCourseCodeinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryCourseApi({
+    course_info: queryAttendanceCmd.value.course_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item.course_code_id + ' | ' + item.course_name + ' | ' + item.type + ' | 学分' + item.credit, // 显示 user_id 字段
+      label: item.course_code_id + ' | ' + item.course_name + ' | ' + item.type + ' | 学分' + item.credit
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const queryCourseCodeinfoHandler2 = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryCourseApi({
+    course_info: startAttendanceCmd.value.course_id
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item.course_code_id + ' | ' + item.course_name + ' | ' + item.type + ' | 学分' + item.credit, // 显示 user_id 字段
+      label: item.course_code_id + ' | ' + item.course_name + ' | ' + item.type + ' | 学分' + item.credit
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: queryAttendanceCmd.value.student_id,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectCourseCode = (item) => {
+  queryAttendanceCmd.value.course_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', queryAttendanceCmd.value.course_id)
+}
+const handleSelectCourseCode2 = (item) => {
+  startAttendanceCmd.value.course_id = item.label.split('|').map(s => s.trim())[0]
+  console.log('Selected:', startAttendanceCmd.value.course_id)
+}
+const handleSelectStudent = (item) => {
+  queryAttendanceCmd.value.student_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', queryAttendanceCmd.value.student_id)
+}
+
+onMounted(async () => {
+  if (isStudent(userinfo.getAuth())) {
+    queryAttendanceCmd.value.student_id = userinfo.id
+    await queryAttendanceHandler(toRaw(queryAttendanceCmd.value))
+  }
+})
 </script>
 
 <style lang="scss" scoped>

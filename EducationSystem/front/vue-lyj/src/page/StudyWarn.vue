@@ -3,8 +3,13 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryWarnCmd.student_id" class="ipt" placeholder="请输入学生id" />
-        <el-button class="btn" type="primary" @click="queryWarnHandler">查询</el-button>
+        <el-autocomplete v-if="!isStudent(userinfo.getAuth())" clearable
+          v-model="queryWarnCmd.student_id" class="ipt" placeholder="请输入学号"
+          :fetch-suggestions="queryUserBasicinfoHandler"
+          @select="handleSelectStudent"
+          :hide-loading="true" style="width: 200px; margin-right: 20px;"
+        />
+        <el-button v-if="!isStudent(userinfo.getAuth())" class="btn" type="primary" @click="queryWarnHandler">查询</el-button>
       </div>
     </div>
 
@@ -41,7 +46,10 @@
 
 <script setup>
 import {queryStudyWarnApi} from "../api/StudyWarnApi.js";
-
+import {isStudent} from "../infra/tools/authTools.js";
+import {useUserInfoStore} from "../infra/store/userinfoStore.js";
+import {queryUserinfoApi, queryUserBasicinfoApi} from "../api/UserinfoApi.js";
+const userinfo = useUserInfoStore()
 const warnTable = ref([
   // {
   //   student_id: 10000,
@@ -98,6 +106,36 @@ const queryWarnHandler = async () => {
   })
   warnTable.value = resp.data
 }
+
+// 学生 - 查询
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: queryWarnCmd.value.student_id,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectStudent = (item) => {
+  queryWarnCmd.value.student_id = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', queryWarnCmd.value.student_id)
+}
+
+onMounted(async () => {
+  await queryWarnHandler()
+})
 
 </script>
 

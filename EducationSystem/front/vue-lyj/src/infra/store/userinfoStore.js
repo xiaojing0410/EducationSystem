@@ -6,12 +6,15 @@ const userinfoConst = {
     AUTH: "userinfo.auth",
 }
 export const useUserInfoStore = defineStore('userinfo', {
-  state: () => ({
-      id: localStorage.getItem(userinfoConst.ID) || null,
-      username: localStorage.getItem(userinfoConst.USERNAME) || null,
-      auth: Number(localStorage.getItem(userinfoConst.AUTH)) || null,
-  }),
+    state: () => ({
+        id: localStorage.getItem(userinfoConst.ID) || null,
+        username: localStorage.getItem(userinfoConst.USERNAME) || null,
+        auth: Number(localStorage.getItem(userinfoConst.AUTH)) || null,
+    }),
     actions: {
+        getAuth() {
+            return Number(this.auth)
+        },
         update({ id, username }) {
             this.id = id;
             this.username = username;

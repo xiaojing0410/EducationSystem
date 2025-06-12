@@ -33,4 +33,19 @@ export const addClassInfoApi = async (
     )
 }
 
+/**
+ * 班级基础信息
+ */
+export const queryClassBasicInfoApi = async (
+    { info }
+) => {
+    return await api.get(
+        "/class/basic",
+        {
+            params: {
+                info
+            }
+        }
+    )
+}
 

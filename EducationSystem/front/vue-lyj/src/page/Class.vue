@@ -3,8 +3,8 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input class="ipt" placeholder="请输入班级信息" />
-        <el-button @click="queryClassInfoHandler" class="btn" type="primary">查询</el-button>
+<!--        <el-input v-model="" class="ipt" placeholder="请输入班级信息" />-->
+<!--        <el-button @click="queryClassInfoHandler" class="btn" type="primary">查询</el-button>-->
         <el-button class="btn" type="warning" @click="addClassCmd.dialogVisible = true">新增班级</el-button>
       </div>
     </div>
@@ -31,7 +31,13 @@
           <el-input v-model="addStudentToClassCmd.class_id" disabled />
         </el-form-item>
         <el-form-item label="学生id">
-          <el-input v-model="addStudentToClassCmd.student_ids" placeholder="请输入学生id(多个id通过逗号分割)" />
+          <el-autocomplete clearable
+            v-model="addStudentToClassCmd.student_ids" placeholder="请输入学号"
+            :fetch-suggestions="queryUserBasicinfoHandler"
+            @select="handleSelectStudent"
+            :hide-loading="true"
+          />
+          <!-- <el-input v-model="addStudentToClassCmd.student_ids" placeholder="请输入学生id(多个id通过逗号分割)" /> -->
         </el-form-item>
       </el-form>
       <template #footer>
@@ -67,6 +73,7 @@
 <script setup>
 // 数据区
 import {addClassInfoApi, queryClassInfoApi, updateClassInfoApi} from "../api/ClassApi.js";
+import {queryUserBasicinfoApi} from "../api/UserinfoApi.js";
 import {ElMessage} from "element-plus";
 
 const classTable = ref([
@@ -79,9 +86,6 @@ const classTable = ref([
   // }
 ])
 
-/**
- * 查询班级信息
- */
 const queryClassInfoHandler = async () => {
   const resp = await queryClassInfoApi()
   classTable.value = resp.data
@@ -104,6 +108,7 @@ const addClassHandler = async () => {
     grade: addClassCmd.value.grade,
     year: addClassCmd.value.year
   })
+  addClassCmd.value.dialogVisible = false
   await queryClassInfoHandler()
   ElMessage.success("班级添加成功")
 }
@@ -125,9 +130,33 @@ const addStudentToClassHandler = async () => {
     student_ids: addStudentToClassCmd.value.student_ids,
     class_id: addStudentToClassCmd.value.class_id
   })
+  addStudentToClassCmd.value.isShow = false
   ElMessage.success("添加成功")
 }
-
+const queryUserBasicinfoHandler = async (query, cb) => {
+  if (!query) {
+    cb([])
+    return
+  }
+  const resp = await queryUserBasicinfoApi({
+    info: addStudentToClassCmd.value.student_ids,
+    type: 3
+  })
+  // 判断返回的数据是否存在
+  if (resp && resp.data) {
+    const suggestions = resp.data.map(item => ({
+      value: item, // 显示 user_id 字段
+      label: item,
+    }))
+    cb(suggestions)
+  } else {
+    cb([])
+  }
+}
+const handleSelectStudent = (item) => {
+  addStudentToClassCmd.value.student_ids = item.label.split('|').map(s => s.trim())[1]
+  console.log('Selected:', addStudentToClassCmd.value.student_ids)
+}
 onMounted(async () => {
   await queryClassInfoHandler()
 })

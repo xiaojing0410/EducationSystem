@@ -3,7 +3,7 @@
     <!-- 操作区 -->
     <div class="actions" >
       <div class="row">
-        <el-input v-model="queryCourseCmd.course_info" class="ipt" placeholder="请输入课程信息" />
+        <el-input v-model="queryCourseCmd.course_info" clearable class="ipt" placeholder="请输入课程信息" />
         <el-button class="btn" type="primary" @click="queryCourseHandler">查询</el-button>
         <el-button class="btn" type="warning" @click="addCourseCmd.dialogVisible = true">新增课程</el-button>
       </div>
@@ -89,6 +89,8 @@ const addCourseHandler = async () => {
     type: addCourseCmd.value.type,
     credit: addCourseCmd.value.credit
   })
+  addCourseCmd.value.dialogVisible = false
+  await queryCourseHandler()
   ElMessage.success("添加成功")
 }
 

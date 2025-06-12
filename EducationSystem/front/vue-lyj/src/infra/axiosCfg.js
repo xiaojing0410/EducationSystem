@@ -4,6 +4,7 @@ import {ElMessage} from "element-plus";
 //构建统一 axios 实例
 export const api = axios.create({
     baseURL: "http://100.98.120.108:8080",
+    baseURL: "http://127.0.0.1:8080",
     timeout: 30000, // 30s等待时间(主要是因为有 ai)
     withCredentials: true // 允许携带 cookies（包括 sessionID）
 });
@@ -33,6 +34,7 @@ api.interceptors.response.use(
         return resp.data;
     },
     error => {
+        ElMessage.error("检查后端是否启动了")
         return Promise.reject(error);
     }
 );
