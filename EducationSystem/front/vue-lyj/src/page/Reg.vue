@@ -63,6 +63,8 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import {ElMessage} from "element-plus";
+import {regApi} from "../api/UserinfoApi.js";
 
 const router = useRouter();
 
@@ -82,6 +84,17 @@ const registerFormRef = ref(null);
 
 // 注册逻辑
 const handleRegister = async () => {
+  if (regCmd.password !== regCmd.confirmPassword) {
+    ElMessage.error("两次输入密码不一致");
+  }
+  const resp = await regApi(toRaw(regCmd))
+  if (resp.code === 0) {
+    ElMessage.success("注册成功")
+    // 清空字段
+    Object.keys(regCmd).forEach(key => {
+      regCmd[key] = "";
+    });
+  }
 };
 
 // 返回登录页面
